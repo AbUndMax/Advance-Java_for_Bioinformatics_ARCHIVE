@@ -14,3 +14,11 @@ Run the ShowRelationsTree program via mvn in the console from the project folder
  
 Even with a  `module-info.java`file I was not able to "shortcut" the program call!
 Maybe we can explain this a little bit better in detail in the next tutorial :)
+
+## DEBUG
+If something happens that the ArgsParser dependency cannot be resolved. This likely
+is due that you cannot acces my github packages because you don't have set a
+git Token in the setting.xml on your PC. This token is necessary so maven can download
+the ArgsParser dependency from git-Packages.
+
+Please create a git Token with Packages:read permissions and setup the settings.xml
