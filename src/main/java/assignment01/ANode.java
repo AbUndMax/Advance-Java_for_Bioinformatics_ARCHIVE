@@ -57,8 +57,8 @@ public record ANode(String ID, String name, LinkedList<ANode> children) {
         human body -> alimentary system -> mouth -> soft palate -> right levator veli palatini
         ...
      */
-    public static void printAllPaths(ANode node) {
-        traversePaths(node, "", System.out::println);
+    public static void printAllPaths(ANode tree) {
+        traversePaths(tree, "", System.out::println);
     }
 
     /*
