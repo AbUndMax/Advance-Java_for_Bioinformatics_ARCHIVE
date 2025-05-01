@@ -17,7 +17,7 @@ public class ShowRelationsTree {
         ArgsParser parser = new ArgsParser();
         // Argument to set a read in path to "partof_inclusion_relation_list.txt". First value is a default.
         PthParameter fileToLoadFrom = parser.addParameter(
-                new PthParameter(Paths.get("../AdJa_assignemnts/Assignment01/partof_inclusion_relation_list.txt"),
+                new PthParameter(Paths.get("src/main/resources/asgmt01_res/partof_inclusion_relation_list.txt"),
                         "filePath", "fp", "Path to the 'part_of_inclusion_relation' file", true));
 
         // Argument for a list of words to filter the output
