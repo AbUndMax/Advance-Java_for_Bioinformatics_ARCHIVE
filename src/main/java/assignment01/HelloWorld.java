@@ -7,7 +7,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
 /*
-Author: Niklas Gerbes
+Author: Luis Reimer, Niklas Gerbes
  */
 public class HelloWorld extends Application {
     public void start (Stage primaryStage) {

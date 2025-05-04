@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 
 /*
-Author: Niklas Gerbes
+Author: Luis Reimer, Niklas Gerbes
  */
 public class ShowRelationsTree {
     public static void main(String[] args) {

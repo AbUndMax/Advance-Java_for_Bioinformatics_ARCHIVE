@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 /*
-Author: Niklas Gerbes
+Author: Luis Reimer, Niklas Gerbes
  */
 public record Relation(String parentID, String parentName, String childID, String childName) {
 
@@ -21,7 +21,6 @@ public record Relation(String parentID, String parentName, String childID, Strin
             reader.readLine(); // skip header
             String line;
             while ((line = reader.readLine()) != null) {
-                // Hier kannst du die Zeile parsen, z.B. durch Splitten
                 String[] parts = line.split("\t");
                 String parentID = parts[0].trim();
                 String parentName = parts[1].trim();

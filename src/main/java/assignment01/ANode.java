@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 /*
-Author: Niklas Gerbes
+Author: Luis Reimer, Niklas Gerbes
  */
 public record ANode(String ID, String name, LinkedList<ANode> children) {
 
@@ -26,7 +26,7 @@ public record ANode(String ID, String name, LinkedList<ANode> children) {
     }
 
     /*
-    Helper function to traverse the tree and generate path strings
+    Helper function of higher order to traverse the tree and generate path strings
      */
     public static void traversePaths(ANode node, String path, java.util.function.Consumer<String> action) {
         if (node.children.isEmpty()) {
