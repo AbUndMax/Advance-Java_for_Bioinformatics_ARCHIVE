@@ -1,7 +1,7 @@
 
 ## 📘 Assignment 01 – Feedback
 
-I’ve updated your `pom.xml` to use the latest Java version, as the original one was outdated.
+I’ve updated your `pom.xml` to use the latest version, as the original one was outdated.
 
 Regarding `module-info.java`:
 You're using Java modules, but the **ArgsParser** library you included is not a named module (i.e., it does **not contain a `module-info.class`**). Java’s module system **does not allow automatic access from named modules to unnamed modules**, which is why this approach breaks.
