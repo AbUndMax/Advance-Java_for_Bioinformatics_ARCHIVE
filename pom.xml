@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.AbUndMax</groupId>
-            <artifactId>java_argsparser</artifactId>
+            <artifactId>Java_ArgsParser</artifactId>
             <version>6.1.0</version>
         </dependency>
     </dependencies>
