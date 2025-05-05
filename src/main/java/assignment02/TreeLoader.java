@@ -1,11 +1,27 @@
 package assignment02;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import assignment01.Relation;
 
+/**
+ * Utility class responsible for loading a tree structure from tab-separated data files.
+ * <p>
+ * The class builds a tree of {@link ANode} objects using concept and relation data
+ * provided in the input files. It expects:
+ * <ul>
+ *   <li>A parts file mapping concept IDs to representation IDs</li>
+ *   <li>An elements file mapping concept IDs to associated filenames</li>
+ *   <li>A relations file describing parent-child relationships between concepts</li>
+ * </ul>
+ *
+ * This class is intended to be used for constructing a single-rooted tree structure
+ * which represents hierarchical relations between concepts.
+ *
+ * All files must contain a header line and be tab-separated.
+ *
+ * @author Luis Reimer, Niklas Gerbes
+ */
 public class TreeLoader {
 
     /**
@@ -20,7 +36,7 @@ public class TreeLoader {
 
         HashMap<String, String> conceptIDtoRepID = mapConceptIDRepID(partsFile);
         HashMap<String, Collection<String>> fileList  = loadFileList (elementsFile);
-        LinkedList<Relation> relations = Relation.loadFromFile(relationsFile);
+        LinkedList<Relation> relations = Relation.loadFromFile(new File(relationsFile));
 
         if (conceptIDtoRepID == null || fileList == null || relations.isEmpty()) {
             return null;

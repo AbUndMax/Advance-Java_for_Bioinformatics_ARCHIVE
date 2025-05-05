@@ -2,6 +2,16 @@ package assignment02;
 
 import java.util.Collection;
 
+/**
+ * New implementation of ANode! (DIFFERENT TO ANode FROM ASSIGNMENT01!)
+ * @param conceptId
+ * @param representationId
+ * @param name
+ * @param children
+ * @param fileIds
+ *
+ * @author Luis Reimer, Niklas Gerbes
+ */
 public record ANode(String conceptId, String representationId, String name, Collection<ANode> children, Collection<String> fileIds) {
 
     public String toString() {

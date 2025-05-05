@@ -6,6 +6,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * AnatomyDataExplorer as JavaFX application. Allows to few a
+ * hierarchical list of anatomy terms and their associated FileID
+ *
+ * @author Luis Reimer, Niklas Gerbes
+ */
 public class AnatomyDataExplorer extends Application {
 
     public static void main(String[] args) {
