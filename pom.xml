@@ -9,16 +9,16 @@
     <version>Assignment.01</version>
 
     <properties>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.release>24</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javafx.version>21</javafx.version>
+        <javafx.version>24</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
 
     <repositories>
         <repository>
             <id>github</id>
-            <url>https://maven.pkg.github.com/AbUndMax/Java_ArgsParser</url>
+            <url>https://maven.pkg.github.com/AbUndMax/java_argsparser</url>
         </repository>
     </repositories>
 
