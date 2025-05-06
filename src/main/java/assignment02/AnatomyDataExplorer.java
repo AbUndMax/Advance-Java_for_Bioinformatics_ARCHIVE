@@ -14,10 +14,6 @@ import javafx.stage.Stage;
  */
 public class AnatomyDataExplorer extends Application {
 
-    public static void main(String[] args) {
-        launch();
-    }
-
     public void start(Stage stage) {
         BorderPane root = new BorderPane();
 
@@ -45,6 +41,7 @@ public class AnatomyDataExplorer extends Application {
             }
         });
         SplitPane splitPane = new SplitPane(treeView, listView);
+        splitPane.setDividerPositions(0.7); // more space for the tree since the file names are all very short
         root.setCenter(splitPane);
 
 
