@@ -1,8 +1,8 @@
 package assignment01;
 
-import ArgsParser.ArgsParser;
-import ArgsParser.ParameterTypes.PthParameter;
-import ArgsParser.ParameterTypes.StrArrParameter;
+import libs.ArgsParser.ArgsParser;
+import libs.ArgsParser.ParameterTypes.PthParameter;
+import libs.ArgsParser.ParameterTypes.StrArrParameter;
 
 import java.nio.file.Paths;
 import java.util.LinkedList;

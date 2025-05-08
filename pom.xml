@@ -15,23 +15,11 @@
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/AbUndMax/java_argsparser</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.AbUndMax</groupId>
-            <artifactId>Java_ArgsParser</artifactId>
-            <version>6.1.0</version>
         </dependency>
     </dependencies>
 
