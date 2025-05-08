@@ -1,11 +1,19 @@
 package assignment03.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * Format for words in a wordcloud.
+ * @param word
+ * @param relHeight: size of the word in the wordcloud
+ */
 public record WordCloudItem (String word, double relHeight) implements Comparable<WordCloudItem> {
 
+    /**
+     * From a list of words, this generates a list of WordCloudItems.
+     * The relHeight of each WordCloudItem is dependent on the relative frequency of the word in @param words.
+     */
     public static ArrayList<WordCloudItem> computeItems(ArrayList<String> words) {
         //will store words and their numbers of occurrence
         HashMap<String, Double> occurrences = new HashMap<>();

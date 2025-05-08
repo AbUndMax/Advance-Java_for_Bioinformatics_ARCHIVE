@@ -11,13 +11,12 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class WindowPresenter {
     public WindowPresenter(Stage stage, WindowController controller, Model model) {
-        //here we can assign actions to the buttons
+        //here we assign actions to the buttons
         controller.getMenuItemClose().setOnAction(e -> Platform.exit());
 
         controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView().getRoot()));
@@ -30,12 +29,11 @@ public class WindowPresenter {
         controller.getButtonSelectAll().setOnAction(e -> selectAll(controller.getTreeView()));
         controller.getButtonSelectNone().setOnAction(e -> selectNone(controller));
 
-
         TreeViewSetup.setupTree(controller.getTreeView(), model);
         controller.getTreeView().getSelectionModel()
-                .selectedItemProperty()
-                .addListener(e -> updateWordCloud(controller));
+                .selectedItemProperty().addListener(e -> updateWordCloud(controller));
     }
+
     /**
      * Helper function to recursively expand all nodes below the input node
      * @param item from which all nodes should be expanded
@@ -119,14 +117,17 @@ public class WindowPresenter {
         FlowPane flowPane = controller.getFlowPane();
         flowPane.getChildren().clear();
 
+        //get currently selected items in the treeView
         ObservableList<TreeItem<ANode>> selectedItems = controller.getTreeView().getSelectionModel().getSelectedItems();
         ArrayList<String> words = new ArrayList<>(selectedItems.size()*2);
+        //for every selected item, get the value (ANode), get its name, split by \s and add all to words.
         for (TreeItem<ANode> treeItem : selectedItems) {
             words.addAll(Arrays.asList(treeItem.getValue().name().split(" ")));
         }
+        //from the list of words, compute the list of WordCloudItems.
         ArrayList<WordCloudItem> wordCloudItems = WordCloudItem.computeItems(words);
 
-
+        //add all WordCloudItems as Labels to the flowPane; in reverse order so the largest is on top.
         for (int i = wordCloudItems.size()-1; i >= 0; i--) {
             Label word = new Label(wordCloudItems.get(i).word());
             word.setStyle("-fx-font-size: " + wordCloudItems.get(i).relHeight() * 64 + "px;");

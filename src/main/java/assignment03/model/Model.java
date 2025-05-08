@@ -2,6 +2,9 @@ package assignment03.model;
 
 import java.io.IOException;
 
+/**
+ * Loads the Tree from the files and stores the root.
+ */
 public class Model {
     private final ANode partOfRoot;
 

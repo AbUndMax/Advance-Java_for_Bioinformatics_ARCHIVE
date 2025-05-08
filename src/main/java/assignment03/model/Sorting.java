@@ -26,6 +26,7 @@ public class Sorting<T extends Comparable<T>> {
         return merge(a1, a2);
     }
 
+    //utility for mergesort
     public final  ArrayList<T> merge(ArrayList<T> a1, ArrayList<T> a2) {
         ArrayList<T> c = new ArrayList<>(a1.size() + a2.size());
         while (!a1.isEmpty() && !a2.isEmpty()) {

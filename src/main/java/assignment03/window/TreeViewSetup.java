@@ -9,8 +9,9 @@ import javafx.scene.control.TreeView;
 public class TreeViewSetup {
 
     public static void setupTree(TreeView<ANode> treeView, Model model) {
-        treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        treeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE); //enable multiple selection
 
+        //populate the treeView
         TreeItem<ANode> root = createTreeItemsRec(model.getPartOfRoot());
         treeView.setRoot(root);
     }

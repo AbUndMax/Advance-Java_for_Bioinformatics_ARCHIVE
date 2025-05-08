@@ -13,3 +13,8 @@ see `src/main/java/assignment01/README_asgmt01.md`.
 
 ### assignment02: AnatomyDataExplorer
 run: `mvn javafx:run@anatomyDataExplorer`
+
+### assignemnt03: WordExplorer
+run `mvn clean javafx:run@wordExplorer`
+- for the written answers (scene-graph diagram & answer to task3.2) see the 
+  `src/main/java/assignemnt03/README_asgmt03.md`

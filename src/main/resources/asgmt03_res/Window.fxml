@@ -62,7 +62,7 @@
                   <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <items>
                         <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0" />
-                        <ScrollPane>
+                        <ScrollPane fitToWidth="true">
                            <content>
                               <FlowPane fx:id="flowPane" hgap="10.0" vgap="10.0" />
                            </content>
