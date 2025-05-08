@@ -21,6 +21,11 @@
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>24</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -48,6 +53,15 @@
                         </goals>
                         <configuration>
                             <mainClass>assignment02.AnatomyDataExplorer</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wordExplorer</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>assignment03.WordExplorerMain</mainClass>
                         </configuration>
                     </execution>
                 </executions>
