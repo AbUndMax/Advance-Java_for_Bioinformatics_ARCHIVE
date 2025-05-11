@@ -67,6 +67,34 @@ That said, it's usually better to use **existing and well-supported packages alr
 
 * **Design:** The design is fine and all required elements are in the correct order.
 * **Functionality:** OK
+
+    * ⚠️ *Issue:* When the **Expand** button is clicked, the previously selected node in the `TreeView` remains highlighted. This can be confusing for users, as the selection may not correspond to the newly visible nodes.
+    * 🛠️ *How to fix it:* Add the following line before calling the recursive expansion method to clear the current selection:
+
+      ```java
+      treeView.getSelectionModel().clearSelection();
+      ```
+
+      Since `treeView` is currently a local variable inside `start()`, you can:
+
+        1. Make `treeView` an instance variable (e.g. declare `private TreeView<ANode> treeView;` at the top).
+        2. Assign it in `start()` and access it inside `expandTreeView()` and `collapseTreeView()`, or
+        3. If keeping it local, move the selection clearing directly inside the button action like this:
+
+      ```java
+      expandButton.setOnAction(e -> {
+          treeView.getSelectionModel().clearSelection();  // Clear selection before expanding
+          expandTreeView(rootItem);
+      });
+  
+      collapseButton.setOnAction(e -> {
+          treeView.getSelectionModel().clearSelection();  // Clear selection before collapsing
+          collapseTreeView(rootItem);
+      });
+      ```
+
+      This ensures a cleaner and more intuitive user experience.
+
 * **Points:** ✅ **2/2**
 
 ---
