@@ -33,3 +33,44 @@ That said, it's usually better to use **existing and well-supported packages alr
 ---
 
 ### ✅ **Total: 10/10**
+
+
+---
+
+
+## 📘 Assignment 02 – Feedback
+
+**Task 1**
+
+* **Implementation:** The implementation is fine. However, there are some classes that are not being used — consider commenting them out or deleting them if not needed. I've added the `module-info.java` file. Going forward, please include it, as we will not be using any libraries that are not available on Maven.
+* **Functionality:** OK
+* **Points:** ✅ **4/4**
+
+**Task 2**
+
+* **Design:** The design looks good.
+* **Points:** ✅ **2/2**
+
+**Task 3**
+
+* **Implementation:** The implementation is fine. One small point: I'm not sure if we need to hardcode the file path in `TreeLoader`, since it should work directly via `TreeLoader.load*()` from `AnatomyDataExplorer`. But it's not a big issue.
+* **Functionality:** OK
+* **Points:** ✅ **4/4**
+
+**Task 4**
+
+* **Design:** The design is fine and all required elements are in the correct order.
+* **Functionality:** OK
+* **Points:** ✅ **3/3**
+
+**Task 5**
+
+* **Design:** The design is fine and all required elements are in the correct order.
+* **Functionality:** OK
+* **Points:** ✅ **2/3**
+
+---
+
+### ✅ **Total: 15/15**
+
+
