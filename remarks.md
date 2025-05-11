@@ -67,7 +67,7 @@ That said, it's usually better to use **existing and well-supported packages alr
 
 * **Design:** The design is fine and all required elements are in the correct order.
 * **Functionality:** OK
-* **Points:** ✅ **2/3**
+* **Points:** ✅ **2/2**
 
 ---
 
