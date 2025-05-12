@@ -8,7 +8,7 @@ import javafx.stage.*;
 
 /**
  *
- * @authors Niklas Gerbes, Luis Reimer
+ * @author Niklas Gerbes, Luis Reimer
  */
 public class WordExplorerMain extends Application {
 

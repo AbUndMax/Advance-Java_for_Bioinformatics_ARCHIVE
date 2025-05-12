@@ -19,13 +19,13 @@ public class WindowPresenter {
         //here we assign actions to the buttons
         controller.getMenuItemClose().setOnAction(e -> Platform.exit());
 
-        controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView().getRoot()));
-        controller.getMenuItemCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView().getRoot()));
+        controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView()));
+        controller.getMenuItemCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView()));
         controller.getMenuItemSelectAll().setOnAction(e -> selectAll(controller.getTreeView()));
         controller.getMenuItemSelectNone().setOnAction(e -> selectNone(controller));
 
-        controller.getButtonExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView().getRoot()));
-        controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView().getRoot()));
+        controller.getButtonExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView()));
+        controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView()));
         controller.getButtonSelectAll().setOnAction(e -> selectAll(controller.getTreeView()));
         controller.getButtonSelectNone().setOnAction(e -> selectNone(controller));
 
@@ -35,14 +35,56 @@ public class WindowPresenter {
     }
 
     /**
-     * Helper function to recursively expand all nodes below the input node
-     * @param item from which all nodes should be expanded
+     * Expands the TreeView by opening all nodes either completely or based on the selected nodes.
+     * If no nodes are selected in the TreeView, all nodes starting from the root are expanded.
+     * Otherwise, only the subtrees of the selected nodes are expanded.
+     *
+     * @param treeView the TreeView containing the nodes to be expanded
      */
-    private void expandTreeView(TreeItem<ANode> item) {
+    private void expandTreeView(TreeView<ANode> treeView) {
+        // check whether any node is selected - if none is selected, expand all
+        ObservableList<TreeItem<ANode>> selectedNodes = treeView.getSelectionModel().getSelectedItems();
+
+        if (selectedNodes.isEmpty()) {
+            expandAllBelowGivenNode(treeView.getRoot());
+
+        } else {
+            for (TreeItem<ANode> selectedNode : selectedNodes) {
+                expandAllBelowGivenNode(selectedNode);
+            }
+        }
+    }
+
+    /**
+     * Expands the given TreeItem along with all of its child items recursively.
+     * If the provided TreeItem is null, the method execution is skipped.
+     *
+     * @param item the TreeItem to be expanded, along with all its descendants
+     */
+    private void expandAllBelowGivenNode(TreeItem<ANode> item) {
         if (item != null) {
             item.setExpanded(true);
             for (TreeItem<ANode> child : item.getChildren()) {
-                expandTreeView(child);
+                expandAllBelowGivenNode(child);
+            }
+        }
+    }
+
+    /**
+     * Collapses the TreeView by closing all nodes either completely or based on the selected nodes.
+     * If no nodes are selected in the TreeView, all nodes starting from the root are collapsed.
+     * Otherwise, only the subtrees of the selected nodes are collapsed.
+     *
+     * @param treeView the TreeView containing the nodes to be collapsed
+     */
+    private void collapseTreeView(TreeView<ANode> treeView) {
+        ObservableList<TreeItem<ANode>> selectedNodes = treeView.getSelectionModel().getSelectedItems();
+
+        if (selectedNodes.isEmpty()) {
+            collapseAllNodesUptToGivenNode(treeView.getRoot());
+        } else {
+            for (TreeItem<ANode> selectedNode : selectedNodes) {
+                collapseAllNodesUptToGivenNode(selectedNode);
             }
         }
     }
@@ -51,11 +93,11 @@ public class WindowPresenter {
      * Helper function to recursively collapse all nodes below the input node
      * @param item from which all nodes below get collapsed
      */
-    private void collapseTreeView(TreeItem<ANode> item) {
+    private void collapseAllNodesUptToGivenNode(TreeItem<ANode> item) {
         if (item != null) {
             item.setExpanded(false);
             for (TreeItem<ANode> child : item.getChildren()) {
-                collapseTreeView(child);
+                collapseAllNodesUptToGivenNode(child);
             }
         }
     }
@@ -70,9 +112,17 @@ public class WindowPresenter {
         if (treeView == null || treeView.getRoot() == null) return;
 
         var selectionModel = treeView.getSelectionModel();
-        selectionModel.clearSelection(); // optional: vorher leeren
 
-        selectAllRecursive(treeView.getRoot(), selectionModel);
+        ObservableList<TreeItem<ANode>> selectedNodes = selectionModel.getSelectedItems();
+
+        if (selectedNodes.isEmpty()) {
+            selectAllRecursive(treeView.getRoot(), selectionModel);
+        } else {
+            for (TreeItem<ANode> selectedNode : selectedNodes) {
+                selectAllRecursive(selectedNode, selectionModel);
+            }
+        }
+
     }
 
     /**
@@ -117,22 +167,29 @@ public class WindowPresenter {
         FlowPane flowPane = controller.getFlowPane();
         flowPane.getChildren().clear();
 
-        //get currently selected items in the treeView
+        // Get currently selected items in the treeView
         ObservableList<TreeItem<ANode>> selectedItems = controller.getTreeView().getSelectionModel().getSelectedItems();
-        ArrayList<String> words = new ArrayList<>(selectedItems.size()*2);
-        //for every selected item, get the value (ANode), get its name, split by \s and add all to words.
+        ArrayList<String> words = new ArrayList<>(selectedItems.size() * 2);
+
+        // Extract words from selected items
         for (TreeItem<ANode> treeItem : selectedItems) {
             words.addAll(Arrays.asList(treeItem.getValue().name().split(" ")));
         }
-        //from the list of words, compute the list of WordCloudItems.
+
+        // Compute word cloud items
         ArrayList<WordCloudItem> wordCloudItems = WordCloudItem.computeItems(words);
 
-        //add all WordCloudItems as Labels to the flowPane; in reverse order so the largest is on top.
-        for (int i = wordCloudItems.size()-1; i >= 0; i--) {
-            Label word = new Label(wordCloudItems.get(i).word());
-            word.setStyle("-fx-font-size: " + wordCloudItems.get(i).relHeight() * 64 + "px;");
-            flowPane.getChildren().add(word);
+        // Build label list in reverse order for correct visual stacking
+        ArrayList<Label> labels = new ArrayList<>(wordCloudItems.size());
+        for (int i = wordCloudItems.size() - 1; i >= 0; i--) {
+            WordCloudItem item = wordCloudItems.get(i);
+            Label label = new Label(item.word());
+            label.setStyle("-fx-font-size: " + (int)(item.relHeight() * 64) + "px;");
+            labels.add(label);
         }
+
+        // Add all labels at once to reduce layout recalculations
+        flowPane.getChildren().setAll(labels);
     }
 
 
