@@ -8,11 +8,22 @@ import java.util.function.Consumer;
 
 public class Cladogram {
 
+    private static int noLeavesVisited = 0;
+    public int getNoLeavesVisited() {return noLeavesVisited;}
+
     public static Map<ANode, Point2D> layoutEqualLeafDepth(ANode root) {
         //will be filled
         Map<ANode, Point2D> result = new HashMap<>();
-        
-        return null; //TODO
+        Consumer<ANode> consumer = new Consumer<ANode>() {
+            @Override
+            public void accept(ANode node) {
+                result.put(node, computeCoordsEqualLeafDepth(node, result));
+            }
+        };
+
+        postOrderTraversal(root, consumer);
+
+        return result;
     }
 
     public static Map<ANode, Point2D> layoutUniformEdgeLength(ANode root) {
@@ -48,6 +59,18 @@ public class Cladogram {
         for (ANode child : node.children()) {
             preOrderTraversal(child, function);
         }
+    }
+
+
+    public static Point2D computeCoordsEqualLeafDepth(ANode node, Map<ANode, Point2D> map) {
+        double x,y;
+        x = computeXEqualLeafDepth(node, map);
+        if (node.children().isEmpty()) {
+            y = noLeavesVisited;
+            noLeavesVisited++;
+        } else y = computeYEqualLeafDepth(node, map);
+
+        return new Point2D(x,y);
     }
 
     /**
