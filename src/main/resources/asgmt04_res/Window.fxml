@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="333.0" prefWidth="478.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="asgmt04_res.WindowController">
+   <children>
+      <BorderPane prefHeight="377.0" prefWidth="364.6" scaleShape="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="27.0" prefWidth="362.0" BorderPane.alignment="CENTER">
+              <items>
+                  <MenuBar fx:id="menuBar" prefHeight="54.0" prefWidth="515.0">
+                    <menus>
+                            <Menu mnemonicParsing="false" text="File">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="Save as Newick">
+                                 <accelerator>
+                                    <KeyCodeCombination alt="UP" code="S" control="ANY" meta="UP" shift="UP" shortcut="UP" />
+                                 </accelerator></MenuItem>
+                            <MenuItem mnemonicParsing="false" text="Close">
+                                 <accelerator>
+                                    <KeyCodeCombination alt="UP" code="W" control="ANY" meta="UP" shift="UP" shortcut="UP" />
+                                 </accelerator></MenuItem>
+                        </items>
+                      </Menu>
+                      <Menu mnemonicParsing="false" text="Layout">
+                        <items>
+                          <MenuItem mnemonicParsing="false" text="Fullscreen" />
+                            <MenuItem mnemonicParsing="false" text="Fit" />
+                            <MenuItem mnemonicParsing="false" text="Expand" />
+                        </items>
+                      </Menu>
+                    </menus>
+                  </MenuBar>
+                  <ToolBar prefHeight="40.0" prefWidth="200.0">
+                    <items>
+                        <RadioButton fx:id="radioEqualLeaf" mnemonicParsing="false" text="Equal Leaf Depth" />
+                        <RadioButton fx:id="radioEqualEdge" minWidth="-Infinity" mnemonicParsing="false" prefHeight="18.0" prefWidth="138.0" text="Unifrom Edge Length" />
+                      <Button fx:id="fitButton" maxWidth="32.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="32.0" text="Fit" />
+                        <Button fx:id="expandButton" maxWidth="61.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="61.0" text="Expand" />
+                    </items>
+                  </ToolBar>
+              </items>
+            </SplitPane>
+         </top>
+         <bottom>
+            <Label fx:id="botLabel" prefHeight="0.0" prefWidth="999999.0" text="Label" BorderPane.alignment="CENTER" />
+         </bottom>
+         <center>
+            <ScrollPane BorderPane.alignment="CENTER">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+              </content>
+            </ScrollPane>
+         </center>
+      </BorderPane>
+   </children>
+</AnchorPane>
