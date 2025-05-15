@@ -1,12 +1,12 @@
 package assignment04.window;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.RadioButton;
+import javafx.scene.control.*;
 
 public class WindowController {
+
+    @FXML
+    private ToggleGroup EdgeLength;
 
     @FXML
     private Label botLabel;
@@ -19,6 +19,27 @@ public class WindowController {
 
     @FXML
     private MenuBar menuBar;
+
+    @FXML
+    private MenuItem menuItemClose;
+
+    @FXML
+    private MenuItem menuItemExpand;
+
+    @FXML
+    private MenuItem menuItemFit;
+
+    @FXML
+    private MenuItem menuItemFullscreen;
+
+    @FXML
+    private MenuItem menuItemNewick;
+
+    @FXML
+    private RadioButton radioEqualEdge;
+
+    @FXML
+    private RadioButton radioEqualLeaf;
 
     public Label getBotLabel() {
         return botLabel;
@@ -44,10 +65,10 @@ public class WindowController {
         return radioEqualLeaf;
     }
 
-    @FXML
-    private RadioButton radioEqualEdge;
-
-    @FXML
-    private RadioButton radioEqualLeaf;
+    public MenuItem getMenuItemNewick() {return menuItemNewick;}
+    public MenuItem getMenuItemClose() {return menuItemClose;}
+    public MenuItem getMenuItemFit() {return menuItemFit;}
+    public MenuItem getMenuItemFullscreen() {return menuItemFullscreen;}
+    public MenuItem getMenuItemExpand() {return menuItemExpand;}
 
 }

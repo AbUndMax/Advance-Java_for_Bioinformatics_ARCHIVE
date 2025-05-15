@@ -64,6 +64,15 @@
                             <mainClass>assignment03.WordExplorerMain</mainClass>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>treeDrawer</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>assignment04.TreeDrawer</mainClass>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
