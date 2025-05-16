@@ -14,26 +14,28 @@ public class Cladogram {
     public static Map<ANode, Point2D> layoutEqualLeafDepth(ANode root) {
         //will be filled
         Map<ANode, Point2D> result = new HashMap<>();
-        Consumer<ANode> consumer = new Consumer<ANode>() {
-            @Override
-            public void accept(ANode node) {
-                result.put(node, computeCoordsEqualLeafDepth(node, result));
-            }
-        };
 
-        postOrderTraversal(root, consumer);
+        int[] leavesVisited = {0};
+        postOrderTraversal(root, node -> {
+            double x,y;
+            x = computeXEqualLeafDepth(node, result);
+            if (node.children().isEmpty()) {
+                y = leavesVisited[0];
+                leavesVisited[0]++;
+            } else y = computeYEqualLeafDepth(node, result);
+
+            result.put(node, new Point2D(x,y));
+        });
 
         return result;
     }
 
     public static Map<ANode, Point2D> layoutUniformEdgeLength(ANode root) {
-        //TODO NIKLAS
         Map<ANode, Point2D> result = new HashMap<>();
 
         // First postOrderTraversal for y coord calculation
         // (leaf gets y = incrementing number, inner node = avg. over childs)
-        int[] leavesVisited = {0}; // Mutable Zähler als Array
-
+        int[] leavesVisited = {0}; // Mutable counter using an array
         postOrderTraversal(root, node -> {
             if (node.isLeave()) {
                 result.put(node, new Point2D(0, leavesVisited[0]));
@@ -85,18 +87,6 @@ public class Cladogram {
         for (ANode child : node.children()) {
             preOrderTraversal(child, function);
         }
-    }
-
-
-    public static Point2D computeCoordsEqualLeafDepth(ANode node, Map<ANode, Point2D> map) {
-        double x,y;
-        x = computeXEqualLeafDepth(node, map);
-        if (node.children().isEmpty()) {
-            y = noLeavesVisited;
-            noLeavesVisited++;
-        } else y = computeYEqualLeafDepth(node, map);
-
-        return new Point2D(x,y);
     }
 
     /**
