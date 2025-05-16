@@ -12,14 +12,16 @@ import java.util.Collection;
  *
  * @author Luis Reimer, Niklas Gerbes
  */
-public record ANode(String conceptId, String representationId, String name, Collection<ANode> children, Collection<String> fileIds) {
+public record ANode(String conceptId, String representationId, String name, ANode parent, Collection<ANode> children, Collection<String> fileIds) {
 
     public String toString() {
         return name + " (" + conceptId + ")";
     }
+
     protected boolean addChild(ANode child) {
         return children.add(child);
     }
+
     protected boolean removeChild(ANode child) {
         return children.remove(child);
     }
@@ -30,6 +32,10 @@ public record ANode(String conceptId, String representationId, String name, Coll
 
     protected boolean removeFileID(String fileID) {
         return fileIds.remove(fileID);
+    }
+
+    protected boolean isLeave() {
+        return children.isEmpty();
     }
 
     /**

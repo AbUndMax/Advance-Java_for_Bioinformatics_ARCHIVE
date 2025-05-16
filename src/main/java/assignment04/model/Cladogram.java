@@ -11,13 +11,38 @@ public class Cladogram {
     public static Map<ANode, Point2D> layoutEqualLeafDepth(ANode root) {
         //will be filled
         Map<ANode, Point2D> result = new HashMap<>();
-        
+
         return null; //TODO
     }
 
     public static Map<ANode, Point2D> layoutUniformEdgeLength(ANode root) {
-        //TODO NIKLAS
         Map<ANode, Point2D> result = new HashMap<>();
+
+        // First postOrderTraversal for y coord calculation
+        // (leaf gets y = incrementing number, inner node = avg. over childs)
+        int[] leavesVisited = {0}; // Mutable Zähler als Array
+
+        postOrderTraversal(root, node -> {
+            if (node.isLeave()) {
+                result.put(node, new Point2D(0, leavesVisited[0]));
+                leavesVisited[0]++;
+            } else {
+                // inner node
+                double y = computeYEqualLeafDepth(node, result);
+                result.put(node, new Point2D(0, y)); // x gets set later
+            }
+        });
+
+        // Second preOrderTraversal for x-coord calculation
+        // (all edges have same length: x(w) = x(v) + 1)
+        preOrderTraversal(root, node -> {
+            double x = 0;
+            if (node != root) {
+                x = result.get(node.parent()).getX() + 1;
+            }
+            Point2D oldPoint = result.get(node);
+            result.put(node, new Point2D(x, oldPoint.getY()));
+        });
 
         return result;
     }
@@ -51,7 +76,12 @@ public class Cladogram {
     }
 
     /**
-     * requires all children to be present in the map
+     * Computes the minimum x-coordinate of the child nodes of the given node and decreases it by 1.
+     * This assumes that the provided map contains the x-coordinates for all child nodes of the given node.
+     *
+     * @param node the node whose children's x-coordinates will be analyzed
+     * @param map a mapping of nodes to their respective points containing x and y coordinates
+     * @return the value of the minimum x-coordinate among child nodes minus 1
      */
     public static double computeXEqualLeafDepth(ANode node, Map<ANode, Point2D> map) {
         double min = 1;
@@ -62,7 +92,12 @@ public class Cladogram {
     }
 
     /**
-     * only for not-leaves, else you will regret.
+     * Computes the average y-coordinate of all child nodes of the given node.
+     * This assumes that the provided map contains the y-coordinates for all child nodes of the given node.
+     *
+     * @param node the node whose children's y-coordinates will be averaged
+     * @param map a mapping of nodes to their respective points containing x and y coordinates
+     * @return the average y-coordinate of the child nodes
      */
     public static double computeYEqualLeafDepth(ANode node, Map<ANode, Point2D> map) {
         double sum = 0;

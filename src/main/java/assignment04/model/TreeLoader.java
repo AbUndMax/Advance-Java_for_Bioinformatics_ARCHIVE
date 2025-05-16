@@ -67,8 +67,8 @@ public class TreeLoader {
 
             //public record ANode(String conceptId, String representationId, String name, Collection<ANode> children, Collection<String> fileIds)
             //get child/parent
-            ANode child = nodes.containsKey(childID) ? nodes.get(childID) : new ANode(childID, conceptIDtoRepID.get(childID), childName, new LinkedList<ANode>(), fileList.get(childID));
-            ANode parent = nodes.containsKey(parentID) ? nodes.get(parentID) : new ANode(parentID, conceptIDtoRepID.get(parentID), parentName, new LinkedList<ANode>(), fileList.get(parentID));
+            ANode parent = nodes.containsKey(parentID) ? nodes.get(parentID) : new ANode(parentID, conceptIDtoRepID.get(parentID), parentName, null, new LinkedList<ANode>(), fileList.get(parentID));
+            ANode child = nodes.containsKey(childID) ? nodes.get(childID) : new ANode(childID, conceptIDtoRepID.get(childID), childName, parent, new LinkedList<ANode>(), fileList.get(childID));
             //add child to parents children
             parent.addChild(child);
 
