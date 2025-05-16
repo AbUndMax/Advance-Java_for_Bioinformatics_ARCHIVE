@@ -1,6 +1,7 @@
 package assignment04.model;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * New implementation of ANode! (DIFFERENT TO ANode FROM ASSIGNMENT01!)
@@ -22,20 +23,53 @@ public record ANode(String conceptId, String representationId, String name, ANod
         return children.add(child);
     }
 
-    protected boolean removeChild(ANode child) {
-        return children.remove(child);
-    }
-
-    protected boolean addFileID(String fileID) {
-        return fileIds.add(fileID);
-    }
-
-    protected boolean removeFileID(String fileID) {
-        return fileIds.remove(fileID);
-    }
-
     protected boolean isLeave() {
         return children.isEmpty();
+    }
+
+    protected boolean isRoot() {
+        return parent == null;
+    }
+
+    /**
+     * Computes and returns the number of leaf nodes in a tree starting from the current node.
+     * A leaf node is defined as a node without any children.
+     *
+     * @return the total number of leaf nodes in the subtree rooted at the current node
+     */
+    public int getNumberOfLeaves() {
+        int[] numberOfLeaves = {0};
+        Cladogram.postOrderTraversal(this, node -> {
+            if (node.isLeave()) numberOfLeaves[0]++;
+        });
+        return numberOfLeaves[0];
+    }
+
+    /**
+     * Calculates the maximum horizontal depth of the tree starting from the current node.
+     * The horizontal depth is determined by the maximum number of internal nodes along a path
+     * from the root to a leaf in the tree. An internal node is considered part of the depth only
+     * if it has at least one child.
+     *
+     * @return the maximum horizontal depth of the tree as an integer
+     */
+    public int horizontalTreeDepth() {
+        if (children == null || children.isEmpty()) {
+            return 1;
+        }
+        return 1 + children.stream()
+                .mapToInt(ANode::horizontalTreeDepth)
+                .max()
+                .orElse(0);
+    }
+
+    /**
+     * Override of hashCode to prevent recursive calls.
+     * Fields conceptId, representationId, and name are used in the hash code calculation.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(conceptId, representationId, name);
     }
 
     /**

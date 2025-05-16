@@ -8,9 +8,14 @@ import java.util.function.Consumer;
 
 public class Cladogram {
 
-    private static int noLeavesVisited = 0;
-    public int getNoLeavesVisited() {return noLeavesVisited;}
-
+    /**
+     * Calculates the layout for a tree structure such that nodes are positioned based on an equal-leaf-depth strategy.
+     * Each node is assigned a position in a coordinate space, where the x-coordinate is determined by the structure
+     * of its children and the y-coordinate is determined by the number of leaves visited during traversal.
+     *
+     * @param root the root node of the tree for which the layout should be computed
+     * @return a mapping of each node in the tree to its corresponding position as a 2D point
+     */
     public static Map<ANode, Point2D> layoutEqualLeafDepth(ANode root) {
         //will be filled
         Map<ANode, Point2D> result = new HashMap<>();
@@ -24,12 +29,22 @@ public class Cladogram {
                 leavesVisited[0]++;
             } else y = computeYEqualLeafDepth(node, result);
 
-            result.put(node, new Point2D(x,y));
+            result.put(node, new Point2D(x ,y));
         });
 
         return result;
     }
 
+    /**
+     * Computes a layout for a tree structure such that all edges between nodes have the same length.
+     * This method assigns each node a position in a 2D coordinate space based on its relationship
+     * with its parent and siblings. The x-coordinates are incremented uniformly while y-coordinates
+     * reflect subtree structure with nodes positioned based on averages or leaf counting.
+     *
+     * @param root the root node of the tree for which the layout is to be computed
+     * @return a mapping of each node in the tree to its assigned position as a 2D point,
+     *         represented by {@link Point2D}
+     */
     public static Map<ANode, Point2D> layoutUniformEdgeLength(ANode root) {
         Map<ANode, Point2D> result = new HashMap<>();
 
@@ -51,7 +66,7 @@ public class Cladogram {
         // (all edges have same length: x(w) = x(v) + 1)
         preOrderTraversal(root, node -> {
             double x = 0;
-            if (node != root) {
+            if (!node.isRoot()) {
                 x = result.get(node.parent()).getX() + 1;
             }
             Point2D oldPoint = result.get(node);

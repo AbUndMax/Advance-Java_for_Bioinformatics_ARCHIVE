@@ -2,9 +2,13 @@ package assignment04.window;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
 public class WindowController {
+
+    @FXML
+    private ScrollPane scrollPane;
 
     @FXML //die anchorpane innerhalb der scrollpane
     private StackPane treePane;
@@ -45,6 +49,9 @@ public class WindowController {
     @FXML
     private RadioButton radioEqualLeaf;
 
+    @FXML
+    private BorderPane innerBorderPane;
+
     public Label getBotLabel() {
         return botLabel;
     }
@@ -75,5 +82,7 @@ public class WindowController {
     public MenuItem getMenuItemFullscreen() {return menuItemFullscreen;}
     public MenuItem getMenuItemExpand() {return menuItemExpand;}
     public StackPane getTreePane() {return treePane;}
+    public BorderPane getInnerBorderPane() {return innerBorderPane;}
+    public ScrollPane getScrollPane() {return scrollPane;}
 
 }
