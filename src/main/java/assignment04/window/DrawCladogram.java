@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 
 public class DrawCladogram {
 
-    static int numberOfLeaves = 0;
-
     /**
      * Generates and returns a graphical representation of a cladogram based on the given root node
      * and a map linking nodes to their corresponding coordinates. The method calculates the required
@@ -29,7 +27,6 @@ public class DrawCladogram {
      * @return a {@code Group} object containing JavaFX graphical elements representing the entire cladogram
      */
     public static Group apply(ANode root, Map<ANode, Point2D> nodePointMap) {
-        numberOfLeaves = root.getNumberOfLeaves();
         double lineSpacing = 14; // 12pt Schrift + 2px Puffer
         int numberOfLeaves = root.getNumberOfLeaves();
         double height = numberOfLeaves * lineSpacing;
@@ -62,7 +59,6 @@ public class DrawCladogram {
     public static Group apply(
             ANode root, Map<ANode, Point2D> nodePointMap, double width, double height)
     {
-        numberOfLeaves = root.getNumberOfLeaves();
         Group nodes = new Group();
         Group edges = new Group();
         Group labels = new Group();
@@ -77,26 +73,26 @@ public class DrawCladogram {
         Map<ANode, Point2D> scaledMap = nodePointMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> scaleFun.apply(e.getValue())));
 
         //generate the nodes, edges, labels
-        generateGroupsRec(root, nodes, edges, labels, scaledMap, height);
+        generateGroupsRec(root, nodes, edges, labels, scaledMap, height, root.getNumberOfLeaves());
 
         return new Group(nodes, edges, labels);
     }
 
 
-    public static void generateGroupsRec(ANode thisNode, Group nodes, Group edges, Group labels, Map<ANode, Point2D> nodePointMap, double height) {
+    public static void generateGroupsRec(ANode thisNode, Group nodes, Group edges, Group labels, Map<ANode, Point2D> nodePointMap, double height, int numberOfLeaves) {
 
         //add circle to nodes-group
         nodes.getChildren().add(createCircle(nodePointMap.get(thisNode)));
 
         if (thisNode.children().isEmpty()) {
             //if this is a leaf, add text to labels-group
-            labels.getChildren().add(createLabel(thisNode, nodePointMap.get(thisNode), height));
+            labels.getChildren().add(createLabel(thisNode, nodePointMap.get(thisNode), height, numberOfLeaves));
             return;
         } else {
             //for every child of this node: add an edge to it and recurse on it
             for (ANode child : thisNode.children()) {
                 edges.getChildren().add(createEdge(nodePointMap.get(thisNode), nodePointMap.get(child)));
-                generateGroupsRec(child, nodes, edges, labels, nodePointMap, height);
+                generateGroupsRec(child, nodes, edges, labels, nodePointMap, height, numberOfLeaves);
             }
         }
     }
@@ -111,7 +107,7 @@ public class DrawCladogram {
         return new Polyline(a.getX(), a.getY(), a.getX(), b.getY(), b.getX(), b.getY());
     }
 
-    public static Text createLabel(ANode node, Point2D p, double height) {
+    public static Text createLabel(ANode node, Point2D p, double height, int numberOfLeaves) {
         Text text = new Text(node.name());
         text.applyCss();
 

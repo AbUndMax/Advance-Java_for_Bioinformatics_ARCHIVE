@@ -6,7 +6,7 @@ import java.io.IOException;
  * Loads the Tree from the files and stores the root.
  */
 public class Model {
-    private final assignment04.model.ANode partOfRoot;
+    private final ANode partOfRoot;
 
     public Model() throws IOException {
         partOfRoot = TreeLoader.load("src/main/resources/asgmt02_res/partof_parts_list_e.txt",

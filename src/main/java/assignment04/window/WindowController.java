@@ -52,6 +52,9 @@ public class WindowController {
     @FXML
     private BorderPane innerBorderPane;
 
+    @FXML
+    private TextField filterTextField;
+
     public Label getBotLabel() {
         return botLabel;
     }
@@ -84,5 +87,6 @@ public class WindowController {
     public StackPane getTreePane() {return treePane;}
     public BorderPane getInnerBorderPane() {return innerBorderPane;}
     public ScrollPane getScrollPane() {return scrollPane;}
+    public TextField getFilterTextField() {return filterTextField;}
 
 }

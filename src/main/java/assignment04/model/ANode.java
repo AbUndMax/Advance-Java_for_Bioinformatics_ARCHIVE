@@ -1,19 +1,17 @@
 package assignment04.model;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * New implementation of ANode! (DIFFERENT TO ANode FROM ASSIGNMENT01!)
- * @param conceptId
- * @param representationId
- * @param name
- * @param children
- * @param fileIds
- *
- * @author Luis Reimer, Niklas Gerbes
+ * Represents a node in a hierarchical tree structure, such as a phylogenetic or organizational tree.
+ * Each node can have a unique concept ID and representation ID, a name, a parent node, and a collection
+ * of child nodes and associated file identifiers.
  */
-public record ANode(String conceptId, String representationId, String name, ANode parent, Collection<ANode> children, Collection<String> fileIds) {
+public record ANode(String conceptId, String representationId, String name, ANode parent, LinkedList<ANode> children, Collection<String> fileIds) {
 
     public String toString() {
         return name + " (" + conceptId + ")";
@@ -29,6 +27,10 @@ public record ANode(String conceptId, String representationId, String name, ANod
 
     protected boolean isRoot() {
         return parent == null;
+    }
+
+    protected boolean hasChildren() {
+        return !children.isEmpty();
     }
 
     /**
@@ -107,6 +109,110 @@ public record ANode(String conceptId, String representationId, String name, ANod
             }
         }
         return res;
+    }
+
+    /**
+     * Converts the tree structure rooted at the current node into Newick format.
+     *
+     * @return a String representing the tree structure in Newick format, ending with a semicolon
+     */
+    public String toNewick() {
+        return buildNewick(this) + ";";
+    }
+
+    /**
+     * Recursively builds a Newick representation of the tree structure starting from the given node.
+     * The Newick format represents tree structures using nested, parenthetical notation.
+     *
+     * @param node the root node for which the Newick representation is to be built
+     * @return a String representing the subtree rooted at the given node in Newick format
+     */
+    private String buildNewick(ANode node) {
+        if (node.isLeave()) {
+            return node.name;
+        } else {
+            String childrenNewick = node.children().stream()
+                    .map(this::buildNewick)
+                    .collect(Collectors.joining(","));
+            return "(" + childrenNewick + ")" + node.name();
+        }
+    }
+
+    /**
+     * Creates a deep copy of this node and its entire subtree.
+     *
+     * @return a copy of this node and its descendants as a new tree.
+     */
+    public ANode copyTree() {
+        return copyTreeInternal(null);
+    }
+
+    /**
+     * Internal helper for recursive deep copy, linking each new node to its parent.
+     *
+     * @param parent the parent for the newly copied node
+     * @return the copied node with its subtree
+     */
+    private ANode copyTreeInternal(ANode parent) {
+        LinkedList<ANode> newChildren = new LinkedList<>();
+        Collection<String> newFileIds = fileIds() != null
+                ? new LinkedList<>(fileIds())
+                : new LinkedList<>();
+        ANode copy = new ANode(
+                conceptId(),
+                representationId(),
+                name(),
+                parent,
+                newChildren,
+                newFileIds
+        );
+        for (ANode child : children()) {
+            ANode childCopy = child.copyTreeInternal(copy);
+            newChildren.add(childCopy);
+        }
+        return copy;
+    }
+
+    /**
+     * Filters the tree structure by removing nodes and their subtrees that do not satisfy the given filter condition.
+     * The filter is applied recursively, and nodes are retained if their name contains the specified filter text
+     * or if any of their descendants match the criteria.
+     *
+     * NOTE: the original tree does not exist any more! NON MATCHING PATHS GET REMOVED
+     *
+     * @param filter the string to filter nodes by; nodes whose name contains this string or have matching descendants
+     *               are retained.
+     * @return the root node (this node) of the potentially modified tree structure after filtering.
+     */
+    public ANode filterTree(String filter) {
+        filterTree(this, filter);
+        return this;
+    }
+
+    /**
+     * Recursively filters the tree, starting from the given node, based on the provided filter string.
+     * Nodes whose names contain the filter string or have descendants that match the filter are retained,
+     * while others are removed from the tree. The operation modifies the tree in place.
+     *
+     * @param node the current node being processed during the recursive filtering
+     * @param filter the string to filter nodes by; nodes whose names contain this string or have matching descendants
+     *               are retained
+     * @return true if the current node or any of its descendants matches the filter; false otherwise
+     */
+    private static boolean filterTree(ANode node, String filter) {
+        boolean anyHitInChildren = false;
+        Iterator<ANode> iterator = node.children().iterator();
+        while (iterator.hasNext()) {
+            ANode child = iterator.next();
+            if (!filterTree(child, filter)) {
+                iterator.remove();
+
+            } else {
+                anyHitInChildren = true;
+            }
+        }
+
+        return anyHitInChildren || node.name().contains(filter);
     }
 
 }
