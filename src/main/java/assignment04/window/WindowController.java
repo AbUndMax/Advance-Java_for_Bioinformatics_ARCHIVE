@@ -2,8 +2,12 @@ package assignment04.window;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 
 public class WindowController {
+
+    @FXML //die anchorpane innerhalb der scrollpane
+    private StackPane treePane;
 
     @FXML
     private ToggleGroup EdgeLength;
@@ -70,5 +74,6 @@ public class WindowController {
     public MenuItem getMenuItemFit() {return menuItemFit;}
     public MenuItem getMenuItemFullscreen() {return menuItemFullscreen;}
     public MenuItem getMenuItemExpand() {return menuItemExpand;}
+    public StackPane getTreePane() {return treePane;}
 
 }
