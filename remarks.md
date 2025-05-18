@@ -247,6 +247,9 @@ controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller))
 > When attempting to generate a word cloud for the **entire tree**, your app consumes significant memory and may crash on lower-end machines.
 > You may want to look into optimizing how large selections are handled (e.g., lazy layout, limiting words, caching, etc.).
 > collapseAll still have some issues.
+ 
+
+
 **Points:** 3/3
 
 ---
