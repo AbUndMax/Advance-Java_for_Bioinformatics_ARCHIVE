@@ -133,7 +133,7 @@ You may later use it to display:
 * A **footer label**
 
 I'm just pointing this out — **no points deducted**.
-
+also is it hbox or herobox?
 **Points:** 3/3
 
 ---
