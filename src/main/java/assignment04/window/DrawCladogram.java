@@ -10,6 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,27 +20,25 @@ public class DrawCladogram {
     /**
      * Generates and returns a graphical representation of a cladogram based on the given root node
      * and a map linking nodes to their corresponding coordinates. The method calculates the required
-     * width and height for the diagram dynamically and delegates further processing to an overloaded
-     * method.
+     * width and height for the diagram dynamically and in such a way that the label fontsize will be set to 12.
+     * Further processed are delegated to an overloaded method.
      *
      * @param root the root node of the cladogram representing the starting point of the tree structure
      * @param nodePointMap a map associating each node in the tree with a 2D point representing its position
      * @return a {@code Group} object containing JavaFX graphical elements representing the entire cladogram
      */
     public static Group apply(ANode root, Map<ANode, Point2D> nodePointMap) {
-        double lineSpacing = 14; // 12pt Schrift + 2px Puffer
+        double lineSpacing = 14; // 12pt letters + 2px extra space
         int numberOfLeaves = root.getNumberOfLeaves();
         double height = numberOfLeaves * lineSpacing;
 
-        int maxNameLength = nodePointMap.keySet().stream()
-                .mapToInt(n -> n.name().length())
-                .max()
-                .orElse(10);
+        String longestString = calculateLongestStringInMap(nodePointMap);
+        int maxNameLength = longestString.length();
 
-        double approxCharWidth = 7.0; // durchschnittliche Breite eines Buchstabens bei 12pt
+        double approxCharWidth = 7.0; // avg char width at 12pt
         double labelPadding = 10.0;
 
-        double width = root.horizontalTreeDepth() * 0.8 + (maxNameLength * approxCharWidth) + labelPadding + 10;
+        double width = root.horizontalTreeDepth() * 0.8 + (maxNameLength * approxCharWidth) + labelPadding;
         return apply(root, nodePointMap, width, height);
     }
 
@@ -61,12 +60,14 @@ public class DrawCladogram {
         Group edges = new Group();
         Group labels = new Group();
 
+        int numberOfLeaves = root.getNumberOfLeaves();
+
         //scale map to width and height
         Function<Point2D, Point2D> scaleFun = setupScaleFunction(nodePointMap.values(), width, height);
         Map<ANode, Point2D> scaledMap = nodePointMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> scaleFun.apply(e.getValue())));
 
         //generate the nodes, edges, labels
-        generateGroupsRec(root, nodes, edges, labels, scaledMap, height, root.getNumberOfLeaves());
+        generateGroupsRec(root, nodes, edges, labels, scaledMap, height, numberOfLeaves);
 
         return new Group(nodes, edges, labels);
     }
@@ -77,9 +78,12 @@ public class DrawCladogram {
         //add circle to nodes-group
         nodes.getChildren().add(createCircle(nodePointMap.get(thisNode)));
 
+        // calculate font size
+        double fontSize = calculateFontSize(height, numberOfLeaves);
+
         if (thisNode.children().isEmpty()) {
             //if this is a leaf, add text to labels-group
-            labels.getChildren().add(createLabel(thisNode, nodePointMap.get(thisNode), height, numberOfLeaves));
+            labels.getChildren().add(createLabel(thisNode, nodePointMap.get(thisNode), fontSize));
             return;
         } else {
             //for every child of this node: add an edge to it and recurse on it
@@ -88,6 +92,18 @@ public class DrawCladogram {
                 generateGroupsRec(child, nodes, edges, labels, nodePointMap, height, numberOfLeaves);
             }
         }
+    }
+
+    protected static double calculateFontSize(double height, int numberOfLeaves) {
+        double spacing = height / numberOfLeaves;
+        return Math.min(spacing * 0.8, 12);
+    }
+
+    protected static String calculateLongestStringInMap(Map<ANode, Point2D> nodePointMap) {
+        return nodePointMap.keySet().stream()
+                .map(ANode::name)
+                .max(Comparator.comparingInt(String::length))
+                .orElse("");
     }
 
 
@@ -100,12 +116,10 @@ public class DrawCladogram {
         return new Polyline(a.getX(), a.getY(), a.getX(), b.getY(), b.getX(), b.getY());
     }
 
-    public static Text createLabel(ANode node, Point2D p, double height, int numberOfLeaves) {
-        Text text = new Text(node.name());
+    public static Text createLabel(ANode node, Point2D p, double fontSize) {
+        Text text = new Text(node.name() + " ");
         text.applyCss();
 
-        double spacing = height / numberOfLeaves;
-        double fontSize = Math.min(spacing * 0.8, 12);
         text.setFont(Font.font("Arial", fontSize));
 
         Bounds bounds = text.getLayoutBounds();

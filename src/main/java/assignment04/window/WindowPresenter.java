@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.util.Map;
 
@@ -22,7 +24,7 @@ public class WindowPresenter {
 
         //TODO: solve FIT problem: width is only calculated for edges (doesnt include labbels)
         controller.getFitButton().setOnAction(e -> fitButtonHandler(controller, model));
-        //TODO: implement EXPAND function
+        controller.getExpandButton().setOnAction(e -> drawTreeToPane(controller, model));
 
         controller.getFilterTextField().textProperty().addListener((obs, oldText, newText) -> {
             filterHandler(controller, model);
@@ -67,6 +69,7 @@ public class WindowPresenter {
 
         ANode tree = model.getTree();
 
+        // if there are letters in the filter field, apply filter on the tree
         if (!controller.getFilterTextField().getText().isEmpty()) {
             String filter = controller.getFilterTextField().getText();
             tree = tree.applyFilter(filter);
@@ -77,6 +80,20 @@ public class WindowPresenter {
 
         double width = controller.getScrollPane().getViewportBounds().getWidth();
         double height = controller.getScrollPane().getViewportBounds().getHeight();
+        // find largest label:
+        double fontSize = DrawCladogram.calculateFontSize(height, tree.getNumberOfLeaves());
+        String longestString = DrawCladogram.calculateLongestStringInMap(map);
+        System.out.println(longestString);
+        Text longestLeaveText = new Text(longestString + " ");
+        longestLeaveText.setFont(Font.font("Arial", fontSize));
+
+        double longestStringSpace = longestLeaveText.getLayoutBounds().getWidth();
+        double longestStringSpaceHeight = longestLeaveText.getLayoutBounds().getHeight();
+        // the label size is not contained in computing the edge lengths.
+        // so to account for the label size we substract the longestlabel size from the available width to mimic the
+        // free space to draw the edges on!
+        width = width - longestStringSpace;
+        height = height - longestStringSpaceHeight;
 
         controller.getTreePane().getChildren().clear();
         controller.getTreePane().getChildren().add(
