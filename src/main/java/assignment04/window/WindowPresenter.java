@@ -12,10 +12,12 @@ import java.util.Map;
 
 public class WindowPresenter {
 
-
     public WindowPresenter(Stage stage, WindowController controller, Model model) {
         //here we assign actions to the buttons
         controller.getMenuItemClose().setOnAction(event -> Platform.exit());
+
+        controller.getRadioEqualEdge().setOnAction(event -> drawTreeToPane(controller, model));
+        controller.getRadioEqualLeaf().setOnAction(event -> drawTreeToPane(controller, model));
 
         controller.getFitButton().setOnAction(e -> fitButtonHandler(controller, model));
 
@@ -24,24 +26,27 @@ public class WindowPresenter {
         });
 
         //TODO
-        drawTreeToPane(model.getPartOfRoot(), controller);
+        drawTreeToPane(controller, model);
 
     }
 
     /**
-     * Renders a tree structure onto the tree pane within the user interface. The rendering layout is
-     * determined based on the selected edge layout option: either uniform edge length or equal leaf depth.
+     * Draws a tree structure onto the designated pane in the user interface.
+     * The method retrieves the tree structure from the given model and lays out the tree
+     * based on the selected edge layout option (uniform edge length or equal leaf depth).
+     * The tree is then rendered as a graphical group and added to the tree pane in the controller.
      *
-     * @param tree       the root node of the tree structure to be rendered
-     * @param controller the WindowController instance managing the user interface components,
-     *                   particularly the tree pane and the toggle selection for layout options
+     * @param controller the WindowController instance managing the UI components,
+     *                   including the pane where the tree is displayed
+     * @param model      the Model instance containing the tree structure to be displayed
      */
-    private static void drawTreeToPane(ANode tree, WindowController controller) {
+    private static void drawTreeToPane(WindowController controller, Model model) {
+        ANode tree = model.getTree();
+
         boolean state = controller.getRadioEqualEdge().isSelected();
         Map<ANode, Point2D> map = state ? Cladogram.layoutUniformEdgeLength(tree) : Cladogram.layoutEqualLeafDepth(tree);
+
         Group group = DrawCladogram.apply(tree, map);
-        //Group group = DrawCladogram.apply(model.getPartOfRoot(), map, centerWidth, centerHeight);
-        //System.out.println("Stage height: " + controller.getTreePane().getHeight() + ", Stage width: " + controller.getTreePane().getWidth());
         StackPane pane = controller.getTreePane();
         pane.getChildren().clear();
         pane.getChildren().add(group);
@@ -58,22 +63,22 @@ public class WindowPresenter {
      */
     private static void fitButtonHandler(WindowController controller, Model model) {
 
-        ANode tree = model.getPartOfRoot();
+        ANode tree = model.getTree();
 
         if (!controller.getFilterTextField().getText().isEmpty()) {
             String filter = controller.getFilterTextField().getText();
-            tree = tree.copyTree().filterTree(filter);
+            tree = tree.copyTree().applyFilter(filter);
         }
 
         boolean state = controller.getRadioEqualEdge().isSelected();
         Map<ANode, Point2D> map = state ? Cladogram.layoutUniformEdgeLength(tree): Cladogram.layoutEqualLeafDepth(tree);
 
-        double w2 = controller.getScrollPane().getViewportBounds().getWidth();
-        double h2 = controller.getScrollPane().getViewportBounds().getHeight();
+        double width = controller.getScrollPane().getViewportBounds().getWidth();
+        double height = controller.getScrollPane().getViewportBounds().getHeight();
 
         controller.getTreePane().getChildren().clear();
         controller.getTreePane().getChildren().add(
-                DrawCladogram.apply(tree, map, h2, w2));
+                DrawCladogram.apply(tree, map, width, height));
     }
 
     /**
@@ -87,12 +92,8 @@ public class WindowPresenter {
      */
     private static void filterHandler(WindowController controller, Model model) {
         String filter = controller.getFilterTextField().getText();
-        ANode filteredTree = model.getPartOfRoot().copyTree().filterTree(filter);
-        drawTreeToPane(filteredTree, controller);
+        ANode tree = model.getTree();
+        tree.applyFilter(filter);
+        drawTreeToPane(controller, model);
     }
-
-    //
-    //public static void fitFun(WindowController controller) {
-      //  Group group = DrawCladogram.apply();}
-
 }

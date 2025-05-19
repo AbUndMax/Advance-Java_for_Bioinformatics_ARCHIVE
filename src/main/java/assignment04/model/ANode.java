@@ -1,7 +1,6 @@
 package assignment04.model;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -11,7 +10,63 @@ import java.util.stream.Collectors;
  * Each node can have a unique concept ID and representation ID, a name, a parent node, and a collection
  * of child nodes and associated file identifiers.
  */
-public record ANode(String conceptId, String representationId, String name, ANode parent, LinkedList<ANode> children, Collection<String> fileIds) {
+public class ANode {
+    private final String conceptId;
+    private final String representationId;
+    private final String name;
+    private final ANode parent;
+    private final LinkedList<ANode> children;
+    private final Collection<String> fileIds;
+    private boolean filteredOut = false; // this variable specifies if this nodes gets drawn or not
+
+    public ANode(String conceptId, String representationId, String name, ANode parent, LinkedList<ANode> children, Collection<String> fileIds) {
+        this.conceptId = conceptId;
+        this.representationId = representationId;
+        this.name = name;
+        this.parent = parent;
+        this.children = children;
+        this.fileIds = fileIds;
+    }
+
+    public String conceptId() {
+        return conceptId;
+    }
+
+    public String representationId() {
+        return representationId;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public ANode parent() {
+        return parent;
+    }
+
+    /**
+     * Retrieves a filtered list of this node's children.
+     * Only includes children that have not been marked as filtered out.
+     *
+     * @return a LinkedList containing the non-filtered child nodes of this node
+     */
+    public LinkedList<ANode> children() {
+        return children.stream().filter(child -> !child.isFilteredOut())
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Retrieves the list of child nodes associated with this node.
+     *
+     * @return a LinkedList containing the child nodes of this node
+     */
+    public LinkedList<ANode> allChildren() {
+        return children;
+    }
+
+    public Collection<String> fileIds() {
+        return fileIds;
+    }
 
     public String toString() {
         return name + " (" + conceptId + ")";
@@ -27,6 +82,27 @@ public record ANode(String conceptId, String representationId, String name, ANod
 
     protected boolean isRoot() {
         return parent == null;
+    }
+
+    /**
+     * Marks this node as filtered out or not filtered out based on the provided value.
+     * A filtered out node is excluded from further processing or evaluation.
+     *
+     * @param filteredOut a boolean value indicating whether the node should be marked as filtered out (true) or not (false)
+     */
+    public void filteredOut(boolean filteredOut) {
+        this.filteredOut = filteredOut;
+    }
+
+    /**
+     * Checks whether this node has been marked as filtered out.
+     * A node is considered filtered out if it has been explicitly marked
+     * so, typically indicating exclusion from further processing or evaluation.
+     *
+     * @return true if the node is marked as filtered out, false otherwise
+     */
+    public boolean isFilteredOut() {
+        return filteredOut;
     }
 
     protected boolean hasChildren() {
@@ -184,8 +260,8 @@ public record ANode(String conceptId, String representationId, String name, ANod
      *               are retained.
      * @return the root node (this node) of the potentially modified tree structure after filtering.
      */
-    public ANode filterTree(String filter) {
-        filterTree(this, filter);
+    public ANode applyFilter(String filter) {
+        filterNode(this, filter);
         return this;
     }
 
@@ -199,15 +275,14 @@ public record ANode(String conceptId, String representationId, String name, ANod
      *               are retained
      * @return true if the current node or any of its descendants matches the filter; false otherwise
      */
-    private static boolean filterTree(ANode node, String filter) {
+    private static boolean filterNode(ANode node, String filter) {
         boolean anyHitInChildren = false;
-        Iterator<ANode> iterator = node.children().iterator();
-        while (iterator.hasNext()) {
-            ANode child = iterator.next();
-            if (!filterTree(child, filter)) {
-                iterator.remove();
+        for (ANode child : node.allChildren()) {
+            if (!filterNode(child, filter)) {
+                child.filteredOut(true);
 
             } else {
+                child.filteredOut(false);
                 anyHitInChildren = true;
             }
         }
