@@ -22,7 +22,6 @@ public class WindowPresenter {
         controller.getRadioEqualEdge().setOnAction(event -> drawTreeToPane(controller, model));
         controller.getRadioEqualLeaf().setOnAction(event -> drawTreeToPane(controller, model));
 
-        //TODO: solve FIT problem: width is only calculated for edges (doesnt include labbels)
         controller.getFitButton().setOnAction(e -> fitButtonHandler(controller, model));
         controller.getExpandButton().setOnAction(e -> drawTreeToPane(controller, model));
 

@@ -109,7 +109,6 @@ public class DrawCladogram {
 
     /**
      * Below: some helper functions to create the javafx elements of the tree.
-     * TODO: need to be adapted to accomodate size constraints
      */
     public static Polyline createEdge(Point2D a, Point2D b) {
 
