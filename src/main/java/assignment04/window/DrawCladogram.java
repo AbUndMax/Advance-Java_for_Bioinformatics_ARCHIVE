@@ -56,17 +56,10 @@ public class DrawCladogram {
      * @param height the desired height of the display space for the entire cladogram
      * @return a Group object containing graphical elements (nodes, edges, labels) for the visual representation of the cladogram
      */
-    public static Group apply(
-            ANode root, Map<ANode, Point2D> nodePointMap, double width, double height)
-    {
+    public static Group apply(ANode root, Map<ANode, Point2D> nodePointMap, double width, double height) {
         Group nodes = new Group();
         Group edges = new Group();
         Group labels = new Group();
-
-        //TODO:
-        // - use of width and height is not yet implemented.
-        //      - depends on window size -> modify text font size, edge lengths (via X-coord of Point2Ds)
-        //
 
         //scale map to width and height
         Function<Point2D, Point2D> scaleFun = setupScaleFunction(nodePointMap.values(), width, height);

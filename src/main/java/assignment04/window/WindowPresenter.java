@@ -15,17 +15,19 @@ public class WindowPresenter {
     public WindowPresenter(Stage stage, WindowController controller, Model model) {
         //here we assign actions to the buttons
         controller.getMenuItemClose().setOnAction(event -> Platform.exit());
+        //TODO: connect Menu buttons with functions
 
         controller.getRadioEqualEdge().setOnAction(event -> drawTreeToPane(controller, model));
         controller.getRadioEqualLeaf().setOnAction(event -> drawTreeToPane(controller, model));
 
+        //TODO: solve FIT problem: width is only calculated for edges (doesnt include labbels)
         controller.getFitButton().setOnAction(e -> fitButtonHandler(controller, model));
+        //TODO: implement EXPAND function
 
         controller.getFilterTextField().textProperty().addListener((obs, oldText, newText) -> {
             filterHandler(controller, model);
         });
 
-        //TODO
         drawTreeToPane(controller, model);
 
     }
@@ -67,7 +69,7 @@ public class WindowPresenter {
 
         if (!controller.getFilterTextField().getText().isEmpty()) {
             String filter = controller.getFilterTextField().getText();
-            tree = tree.copyTree().applyFilter(filter);
+            tree = tree.applyFilter(filter);
         }
 
         boolean state = controller.getRadioEqualEdge().isSelected();

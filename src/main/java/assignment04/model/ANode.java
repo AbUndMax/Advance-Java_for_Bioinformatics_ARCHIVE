@@ -14,17 +14,15 @@ public class ANode {
     private final String conceptId;
     private final String representationId;
     private final String name;
-    private final ANode parent;
-    private final LinkedList<ANode> children;
+    private ANode parent;
+    private final LinkedList<ANode> children = new LinkedList<>();
     private final Collection<String> fileIds;
     private boolean filteredOut = false; // this variable specifies if this nodes gets drawn or not
 
-    public ANode(String conceptId, String representationId, String name, ANode parent, LinkedList<ANode> children, Collection<String> fileIds) {
+    public ANode(String conceptId, String representationId, String name, Collection<String> fileIds) {
         this.conceptId = conceptId;
         this.representationId = representationId;
         this.name = name;
-        this.parent = parent;
-        this.children = children;
         this.fileIds = fileIds;
     }
 
@@ -42,6 +40,10 @@ public class ANode {
 
     public ANode parent() {
         return parent;
+    }
+
+    public void setParent(ANode parent) {
+        this.parent = parent;
     }
 
     /**
@@ -212,41 +214,6 @@ public class ANode {
                     .collect(Collectors.joining(","));
             return "(" + childrenNewick + ")" + node.name();
         }
-    }
-
-    /**
-     * Creates a deep copy of this node and its entire subtree.
-     *
-     * @return a copy of this node and its descendants as a new tree.
-     */
-    public ANode copyTree() {
-        return copyTreeInternal(null);
-    }
-
-    /**
-     * Internal helper for recursive deep copy, linking each new node to its parent.
-     *
-     * @param parent the parent for the newly copied node
-     * @return the copied node with its subtree
-     */
-    private ANode copyTreeInternal(ANode parent) {
-        LinkedList<ANode> newChildren = new LinkedList<>();
-        Collection<String> newFileIds = fileIds() != null
-                ? new LinkedList<>(fileIds())
-                : new LinkedList<>();
-        ANode copy = new ANode(
-                conceptId(),
-                representationId(),
-                name(),
-                parent,
-                newChildren,
-                newFileIds
-        );
-        for (ANode child : children()) {
-            ANode childCopy = child.copyTreeInternal(copy);
-            newChildren.add(childCopy);
-        }
-        return copy;
     }
 
     /**
