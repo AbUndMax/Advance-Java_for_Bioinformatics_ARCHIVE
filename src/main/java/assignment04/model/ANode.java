@@ -34,6 +34,10 @@ public class ANode {
         return name;
     }
 
+    public Collection<String> getFileIds() {
+        return fileIds;
+    }
+
     public ANode getParent() {
         return parent;
     }
@@ -63,7 +67,7 @@ public class ANode {
     }
 
     protected boolean isLeave() {
-        return children.isEmpty();
+        return this.getChildren().isEmpty();
     }
 
     protected boolean isRoot() {
