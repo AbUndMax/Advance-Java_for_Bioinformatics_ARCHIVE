@@ -18,3 +18,6 @@ run: `mvn javafx:run@anatomyDataExplorer`
 run `mvn clean javafx:run@wordExplorer`
 - for the written answers (scene-graph diagram & answer to task3.2) see the 
   `src/main/java/assignemnt03/README_asgmt03.md`
+
+### assignment04: TreeDrawer
+run `mvn clean javafx:run@treeDrawer`
