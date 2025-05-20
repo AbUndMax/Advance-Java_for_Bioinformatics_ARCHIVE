@@ -148,7 +148,10 @@ public class WindowPresenter {
         // open fileHandler
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Export Newick-String");
-        fileChooser.setInitialFileName("anatomic_relations_tree.nwk");
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Newick Files", "*.nwk", "*.newick", "*.txt")
+        );
+        fileChooser.setInitialFileName("anatomic_relations_tree");
         File file = fileChooser.showSaveDialog(stage);
 
         if (file != null) {
