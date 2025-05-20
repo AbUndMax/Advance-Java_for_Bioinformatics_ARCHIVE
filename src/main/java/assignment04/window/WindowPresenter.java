@@ -93,7 +93,6 @@ public class WindowPresenter {
         // find largest label:
         double fontSize = DrawCladogram.calculateFontSize(height, tree.numberOfLeaves());
         String longestString = DrawCladogram.calculateLongestStringInMap(map);
-        System.out.println(longestString);
         Text longestLeaveText = new Text(longestString + " ");
         longestLeaveText.setFont(Font.font("Arial", fontSize));
 
