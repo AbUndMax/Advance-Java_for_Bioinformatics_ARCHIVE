@@ -24,7 +24,7 @@ public class Cladogram {
         postOrderTraversal(root, node -> {
             double x,y;
             x = computeXEqualLeafDepth(node, result);
-            if (node.children().isEmpty()) {
+            if (node.getChildren().isEmpty()) {
                 y = leavesVisited[0];
                 leavesVisited[0]++;
             } else y = computeYEqualLeafDepth(node, result);
@@ -67,7 +67,7 @@ public class Cladogram {
         preOrderTraversal(root, node -> {
             double x = 0;
             if (!node.isRoot()) {
-                x = result.get(node.parent()).getX() + 1;
+                x = result.get(node.getParent()).getX() + 1;
             }
             Point2D oldPoint = result.get(node);
             result.put(node, new Point2D(x, oldPoint.getY()));
@@ -84,7 +84,7 @@ public class Cladogram {
      * @param function a Consumer function to be applied to each node during traversal
      */
     public static void postOrderTraversal(ANode node, Consumer<ANode> function) {
-        for (ANode child : node.children()) {
+        for (ANode child : node.getChildren()) {
             postOrderTraversal(child, function);
         }
         function.accept(node);
@@ -99,7 +99,7 @@ public class Cladogram {
      */
     public static void preOrderTraversal(ANode node, Consumer<ANode> function) {
         function.accept(node);
-        for (ANode child : node.children()) {
+        for (ANode child : node.getChildren()) {
             preOrderTraversal(child, function);
         }
     }
@@ -114,7 +114,7 @@ public class Cladogram {
      */
     public static double computeXEqualLeafDepth(ANode node, Map<ANode, Point2D> map) {
         double min = 1;
-        for (ANode child : node.children()) {
+        for (ANode child : node.getChildren()) {
             min = Math.min(min, map.get(child).getX());
         }
         return min-1;
@@ -131,7 +131,7 @@ public class Cladogram {
     public static double computeYEqualLeafDepth(ANode node, Map<ANode, Point2D> map) {
         double sum = 0;
         int counter = 0;
-        for (ANode child : node.children()) {
+        for (ANode child : node.getChildren()) {
             sum += map.get(child).getY();
             counter++;
         }

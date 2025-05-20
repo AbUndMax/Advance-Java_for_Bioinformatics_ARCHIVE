@@ -80,7 +80,7 @@ public class TreeLoader {
             nodes.put(childID, child);
             nodes.put(parentID, parent);
 
-            notRootID.add(child.conceptId());
+            notRootID.add(child.getConceptId());
 
 
         }

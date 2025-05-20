@@ -29,7 +29,7 @@ public class DrawCladogram {
      */
     public static Group apply(ANode root, Map<ANode, Point2D> nodePointMap) {
         double lineSpacing = 14; // 12pt letters + 2px extra space
-        int numberOfLeaves = root.getNumberOfLeaves();
+        int numberOfLeaves = root.numberOfLeaves();
         double height = numberOfLeaves * lineSpacing;
 
         String longestString = calculateLongestStringInMap(nodePointMap);
@@ -60,7 +60,7 @@ public class DrawCladogram {
         Group edges = new Group();
         Group labels = new Group();
 
-        int numberOfLeaves = root.getNumberOfLeaves();
+        int numberOfLeaves = root.numberOfLeaves();
 
         //scale map to width and height
         Function<Point2D, Point2D> scaleFun = setupScaleFunction(nodePointMap.values(), width, height);
@@ -81,13 +81,13 @@ public class DrawCladogram {
         // calculate font size
         double fontSize = calculateFontSize(height, numberOfLeaves);
 
-        if (thisNode.children().isEmpty()) {
+        if (thisNode.getChildren().isEmpty()) {
             //if this is a leaf, add text to labels-group
             labels.getChildren().add(createLabel(thisNode, nodePointMap.get(thisNode), fontSize));
             return;
         } else {
             //for every child of this node: add an edge to it and recurse on it
-            for (ANode child : thisNode.children()) {
+            for (ANode child : thisNode.getChildren()) {
                 edges.getChildren().add(createEdge(nodePointMap.get(thisNode), nodePointMap.get(child)));
                 generateGroupsRec(child, nodes, edges, labels, nodePointMap, height, numberOfLeaves);
             }
@@ -101,7 +101,7 @@ public class DrawCladogram {
 
     protected static String calculateLongestStringInMap(Map<ANode, Point2D> nodePointMap) {
         return nodePointMap.keySet().stream()
-                .map(ANode::name)
+                .map(ANode::getName)
                 .max(Comparator.comparingInt(String::length))
                 .orElse("");
     }
@@ -116,7 +116,7 @@ public class DrawCladogram {
     }
 
     public static Text createLabel(ANode node, Point2D p, double fontSize) {
-        Text text = new Text(node.name() + " ");
+        Text text = new Text(node.getName() + " ");
         text.applyCss();
 
         text.setFont(Font.font("Arial", fontSize));

@@ -9,7 +9,12 @@ import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class WindowPresenter {
@@ -17,7 +22,10 @@ public class WindowPresenter {
     public WindowPresenter(Stage stage, WindowController controller, Model model) {
         //here we assign actions to the buttons
         controller.getMenuItemClose().setOnAction(event -> Platform.exit());
-        //TODO: connect Menu buttons with functions
+        controller.getMenuItemFit().setOnAction(event -> fitButtonHandler(controller, model));
+        controller.getMenuItemExpand().setOnAction(event -> drawTreeToPane(controller, model));
+        controller.getMenuItemNewick().setOnAction(event -> NewickHandler(stage, model));
+        controller.getMenuItemFullscreen().setOnAction(event -> stage.setFullScreen(true));
 
         controller.getRadioEqualEdge().setOnAction(event -> drawTreeToPane(controller, model));
         controller.getRadioEqualLeaf().setOnAction(event -> drawTreeToPane(controller, model));
@@ -80,7 +88,7 @@ public class WindowPresenter {
         double width = controller.getScrollPane().getViewportBounds().getWidth();
         double height = controller.getScrollPane().getViewportBounds().getHeight();
         // find largest label:
-        double fontSize = DrawCladogram.calculateFontSize(height, tree.getNumberOfLeaves());
+        double fontSize = DrawCladogram.calculateFontSize(height, tree.numberOfLeaves());
         String longestString = DrawCladogram.calculateLongestStringInMap(map);
         System.out.println(longestString);
         Text longestLeaveText = new Text(longestString + " ");
@@ -113,5 +121,22 @@ public class WindowPresenter {
         ANode tree = model.getTree();
         tree.applyFilter(filter);
         drawTreeToPane(controller, model);
+    }
+
+    private static void NewickHandler(Stage stage, Model model) {
+        // open fileHandler
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Export Newick-String");
+        fileChooser.setInitialFileName("anatomic_relations_tree.nwk");
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try (PrintWriter writer = new PrintWriter(file)){
+                writer.println(model.getTree().toNewick());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

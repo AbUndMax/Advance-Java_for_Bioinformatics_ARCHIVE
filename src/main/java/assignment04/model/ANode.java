@@ -26,19 +26,15 @@ public class ANode {
         this.fileIds = fileIds;
     }
 
-    public String conceptId() {
+    public String getConceptId() {
         return conceptId;
     }
 
-    public String representationId() {
-        return representationId;
-    }
-
-    public String name() {
+    public String getName() {
         return name;
     }
 
-    public ANode parent() {
+    public ANode getParent() {
         return parent;
     }
 
@@ -52,7 +48,7 @@ public class ANode {
      *
      * @return a LinkedList containing the non-filtered child nodes of this node
      */
-    public LinkedList<ANode> children() {
+    public LinkedList<ANode> getChildren() {
         return children.stream().filter(child -> !child.isFilteredOut())
                 .collect(Collectors.toCollection(LinkedList::new));
     }
@@ -62,20 +58,8 @@ public class ANode {
      *
      * @return a LinkedList containing the child nodes of this node
      */
-    public LinkedList<ANode> allChildren() {
+    public LinkedList<ANode> getAllChildren() {
         return children;
-    }
-
-    public Collection<String> fileIds() {
-        return fileIds;
-    }
-
-    public String toString() {
-        return name + " (" + conceptId + ")";
-    }
-
-    protected boolean addChild(ANode child) {
-        return children.add(child);
     }
 
     protected boolean isLeave() {
@@ -86,14 +70,12 @@ public class ANode {
         return parent == null;
     }
 
-    /**
-     * Marks this node as filtered out or not filtered out based on the provided value.
-     * A filtered out node is excluded from further processing or evaluation.
-     *
-     * @param filteredOut a boolean value indicating whether the node should be marked as filtered out (true) or not (false)
-     */
-    public void filteredOut(boolean filteredOut) {
-        this.filteredOut = filteredOut;
+    public String toString() {
+        return name + " (" + conceptId + ")";
+    }
+
+    protected void addChild(ANode child) {
+        children.add(child);
     }
 
     /**
@@ -107,6 +89,16 @@ public class ANode {
         return filteredOut;
     }
 
+    /**
+     * Marks this node as filtered out or not filtered out based on the provided value.
+     * A filtered out node is excluded from further processing or evaluation.
+     *
+     * @param filteredOut a boolean value indicating whether the node should be marked as filtered out (true) or not (false)
+     */
+    public void filteredOut(boolean filteredOut) {
+        this.filteredOut = filteredOut;
+    }
+
     protected boolean hasChildren() {
         return !children.isEmpty();
     }
@@ -117,7 +109,7 @@ public class ANode {
      *
      * @return the total number of leaf nodes in the subtree rooted at the current node
      */
-    public int getNumberOfLeaves() {
+    public int numberOfLeaves() {
         int[] numberOfLeaves = {0};
         Cladogram.postOrderTraversal(this, node -> {
             if (node.isLeave()) numberOfLeaves[0]++;
@@ -153,43 +145,6 @@ public class ANode {
     }
 
     /**
-     * Prints all paths in the subtree below a node (only paths that end in a leaf, not internal node).
-     * Keywords may be added to only print those paths which include all the keywords.
-     * Works as a wrapper for the private recursive collectPrint() function
-     * @param root as the node whose subtree is to be printed
-     * @param filters as a String Array of keywords.
-     */
-    public static void printTree(ANode root, String[] filters) {
-        System.out.println(collectPrint(root, "", filters));
-    }
-
-    /**
-     * Does the computation required by printTree(). Hands back the complete String, ready to be printed to stdout.
-     * @param root
-     * @param p
-     * @param filters
-     * @return
-     */
-    private static String collectPrint(ANode root, String p, String[] filters) {
-        p += root.name;
-        StringBuilder pBuilder = new StringBuilder();
-
-        for (ANode child : root.children) {
-            pBuilder.append(collectPrint(child, p+ "->", filters));
-        }
-        if (root.children.isEmpty()) { //avoid printing paths that end in internal nodes
-            pBuilder.append(p).append("\n");
-        }
-        String res = pBuilder.toString();
-        for (String filter : filters) { //avoid printing paths that dont contain the keywords
-            if (!res.contains(filter)) {
-                return "";
-            }
-        }
-        return res;
-    }
-
-    /**
      * Converts the tree structure rooted at the current node into Newick format.
      *
      * @return a String representing the tree structure in Newick format, ending with a semicolon
@@ -202,6 +157,8 @@ public class ANode {
      * Recursively builds a Newick representation of the tree structure starting from the given node.
      * The Newick format represents tree structures using nested, parenthetical notation.
      *
+     * Only non-filtered nodes are saved!
+     *
      * @param node the root node for which the Newick representation is to be built
      * @return a String representing the subtree rooted at the given node in Newick format
      */
@@ -209,10 +166,10 @@ public class ANode {
         if (node.isLeave()) {
             return node.name;
         } else {
-            String childrenNewick = node.children().stream()
+            String childrenNewick = node.getChildren().stream()
                     .map(this::buildNewick)
                     .collect(Collectors.joining(","));
-            return "(" + childrenNewick + ")" + node.name();
+            return "(" + childrenNewick + ")" + node.getName();
         }
     }
 
@@ -244,7 +201,7 @@ public class ANode {
      */
     private static boolean filterNode(ANode node, String filter) {
         boolean anyHitInChildren = false;
-        for (ANode child : node.allChildren()) {
+        for (ANode child : node.getAllChildren()) {
             if (!filterNode(child, filter)) {
                 child.filteredOut(true);
 
@@ -254,7 +211,7 @@ public class ANode {
             }
         }
 
-        return anyHitInChildren || node.name().contains(filter);
+        return anyHitInChildren || node.getName().contains(filter);
     }
 
 }
