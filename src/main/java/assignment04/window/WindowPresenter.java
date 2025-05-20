@@ -91,7 +91,7 @@ public class WindowPresenter {
         double width = controller.getScrollPane().getViewportBounds().getWidth();
         double height = controller.getScrollPane().getViewportBounds().getHeight();
         // find largest label:
-        double fontSize = DrawCladogram.calculateFontSize(height, tree.nodeMetrics()[1]);
+        double fontSize = DrawCladogram.calculateFontSize(height, tree.numberOfLeaves());
         String longestString = DrawCladogram.calculateLongestStringInMap(map);
         System.out.println(longestString);
         Text longestLeaveText = new Text(longestString + " ");
