@@ -29,7 +29,7 @@ public class DrawCladogram {
      */
     public static Group apply(ANode root, Map<ANode, Point2D> nodePointMap) {
         double lineSpacing = 14; // 12pt letters + 2px extra space
-        int numberOfLeaves = root.numberOfLeaves();
+        int numberOfLeaves = root.nodeMetrics()[1];
         double height = numberOfLeaves * lineSpacing;
 
         String longestString = calculateLongestStringInMap(nodePointMap);
@@ -60,7 +60,7 @@ public class DrawCladogram {
         Group edges = new Group();
         Group labels = new Group();
 
-        int numberOfLeaves = root.numberOfLeaves();
+        int numberOfLeaves = root.nodeMetrics()[1];
 
         //scale map to width and height
         Function<Point2D, Point2D> scaleFun = setupScaleFunction(nodePointMap.values(), width, height);

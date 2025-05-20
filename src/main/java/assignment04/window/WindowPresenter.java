@@ -6,6 +6,7 @@ import assignment04.model.Model;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -61,6 +62,8 @@ public class WindowPresenter {
         StackPane pane = controller.getTreePane();
         pane.getChildren().clear();
         pane.getChildren().add(group);
+
+        writeInformationLabel(controller, model);
     }
 
     /**
@@ -88,7 +91,7 @@ public class WindowPresenter {
         double width = controller.getScrollPane().getViewportBounds().getWidth();
         double height = controller.getScrollPane().getViewportBounds().getHeight();
         // find largest label:
-        double fontSize = DrawCladogram.calculateFontSize(height, tree.numberOfLeaves());
+        double fontSize = DrawCladogram.calculateFontSize(height, tree.nodeMetrics()[1]);
         String longestString = DrawCladogram.calculateLongestStringInMap(map);
         System.out.println(longestString);
         Text longestLeaveText = new Text(longestString + " ");
@@ -105,6 +108,24 @@ public class WindowPresenter {
         controller.getTreePane().getChildren().clear();
         controller.getTreePane().getChildren().add(
                 DrawCladogram.apply(tree, map, width, height));
+
+        writeInformationLabel(controller, model);
+    }
+
+    /**
+     * Updates the informational label at the bottom of the user interface with
+     * metrics about the tree structure, including the total number of nodes, edges,
+     * and leaf nodes.
+     *
+     * @param controller the WindowController instance managing the user interface components,
+     *                   used to retrieve and update the bottom label
+     * @param model      the Model instance containing the tree structure whose
+     *                   metrics are to be displayed
+     */
+    private static void writeInformationLabel(WindowController controller, Model model) {
+        Label label = controller.getBotLabel();
+        int[] nodeMetrics = model.getTree().nodeMetrics();
+        label.setText("Nodes: " + nodeMetrics[0] + ", Edges: " + nodeMetrics[2] + ", Leaves: " + nodeMetrics[1]);
     }
 
     /**
@@ -133,9 +154,12 @@ public class WindowPresenter {
         if (file != null) {
             try (PrintWriter writer = new PrintWriter(file)){
                 writer.println(model.getTree().toNewick());
-
             } catch (IOException e) {
-                e.printStackTrace();
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                alert.setTitle("Save Error");
+                alert.setHeaderText("Failed to save the Newick file.");
+                alert.setContentText(e.getMessage());
+                alert.showAndWait();
             }
         }
     }

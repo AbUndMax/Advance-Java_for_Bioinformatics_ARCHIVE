@@ -108,17 +108,31 @@ public class ANode {
     }
 
     /**
-     * Computes and returns the number of leaf nodes in a tree starting from the current node.
-     * A leaf node is defined as a node without any children.
+     * Computes and returns various metrics about the tree structure starting from the current node.
+     * The method performs a post-order traversal of the tree and calculates:
+     * - The total number of nodes in the tree.
+     * - The total number of leaf nodes (nodes without children).
+     * - The total number of edges in the tree.
      *
-     * @return the total number of leaf nodes in the subtree rooted at the current node
+     * @return an integer array containing three elements:
+     *         - [0] The total number of nodes.
+     *         - [1] The total number of leaf nodes.
+     *         - [2] The total number of edges.
      */
-    public int numberOfLeaves() {
-        int[] numberOfLeaves = {0};
+    public int[] nodeMetrics() {
+        int[] nodes = {0};
+        int[] leaves = {0};
+
         Cladogram.postOrderTraversal(this, node -> {
-            if (node.isLeave()) numberOfLeaves[0]++;
+            nodes[0]++;
+            if (node.isLeave()) {
+                leaves[0]++;
+            }
         });
-        return numberOfLeaves[0];
+
+        int edges = nodes[0] - 1;
+
+        return new int[]{nodes[0], leaves[0], edges};
     }
 
     /**
