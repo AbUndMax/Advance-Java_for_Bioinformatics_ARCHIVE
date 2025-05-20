@@ -24,7 +24,7 @@ public class Cladogram {
         postOrderTraversal(root, node -> {
             double x,y;
             x = computeXEqualLeafDepth(node, result);
-            if (node.children().isEmpty()) {
+            if (node.isLeave()) {
                 y = leavesVisited[0];
                 leavesVisited[0]++;
             } else y = computeYEqualLeafDepth(node, result);

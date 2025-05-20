@@ -79,7 +79,7 @@ public class ANode {
     }
 
     protected boolean isLeave() {
-        return children.isEmpty();
+        return children().isEmpty();
     }
 
     protected boolean isRoot() {
