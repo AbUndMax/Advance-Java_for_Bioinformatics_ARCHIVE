@@ -55,6 +55,12 @@ public class WindowPresenter {
     private static void drawTreeToPane(WindowController controller, Model model) {
         ANode tree = model.getTree();
 
+        // add an artificial parentNode as parent to root to draw a root edge
+        tree.setParent(new ANode("0000", "0000", "ARTIFICIAL", null));
+        ANode originalRoot = tree;
+        tree = tree.getParent();
+        tree.addChild(originalRoot);
+
         boolean state = controller.getRadioEqualEdge().isSelected();
         Map<ANode, Point2D> map = state ? Cladogram.layoutUniformEdgeLength(tree) : Cladogram.layoutEqualLeafDepth(tree);
 
@@ -62,6 +68,10 @@ public class WindowPresenter {
         StackPane pane = controller.getTreePane();
         pane.getChildren().clear();
         pane.getChildren().add(group);
+
+        // remove the artificial Node
+        tree = tree.getChildren().getFirst();
+        tree.setParent(null);
 
         writeInformationLabel(controller, model);
     }
@@ -78,6 +88,12 @@ public class WindowPresenter {
     private static void fitButtonHandler(WindowController controller, Model model) {
 
         ANode tree = model.getTree();
+
+        // add an artificial parentNode as parent to root to draw a root edge
+        tree.setParent(new ANode("0000", "0000", "ARTIFICIAL", null));
+        ANode originalRoot = tree;
+        tree = tree.getParent();
+        tree.addChild(originalRoot);
 
         // if there are letters in the filter field, apply filter on the tree
         if (!controller.getFilterTextField().getText().isEmpty()) {
@@ -107,6 +123,10 @@ public class WindowPresenter {
         controller.getTreePane().getChildren().clear();
         controller.getTreePane().getChildren().add(
                 DrawCladogram.apply(tree, map, width, height));
+
+        // remove the artificial Node
+        tree = tree.getChildren().getFirst();
+        tree.setParent(null);
 
         writeInformationLabel(controller, model);
     }
