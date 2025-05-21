@@ -101,4 +101,168 @@ That said, it's usually better to use **existing and well-supported packages alr
 
 ### ✅ **Total: 15/15**
 
+---
+
+## 📘 Assignment 03 – Feedback
+
+---
+
+### **Task 1 – Design**
+
+All required components were implemented.
+However, in your FXML:
+
+```xml
+<bottom>
+   <HBox prefHeight="20.0" BorderPane.alignment="CENTER" />
+</bottom>
+```
+
+This `<HBox>` is empty, but your diagram suggests it contains content. While it's not functionally incorrect, it may confuse readers or suggest missing content.
+
+Right now, it likely serves one of the following roles:
+
+✅ **1. Acts as padding/spacing**
+Adds a 20-pixel height at the bottom for visual balance.
+
+✅ **2. Placeholder for future content**
+You may later use it to display:
+
+* A **status bar**
+* **Debug info**, or
+* A **footer label**
+
+I'm just pointing this out — **no points deducted**.
+also is it hbox or herobox?
+**Points:** 3/3
+
+---
+
+### **Task 2 – Implementation**
+
+Your implementation is correct and meets expectations.
+
+**Points:** 1/1
+
+---
+
+### **Task 3 – Implementation & Functionality**
+
+Correct implementation. The functionality works as expected, and your response to the question is also accurate.
+
+**Points:** 2/2
+
+---
+
+### **Task 4 – Implementation & Functionality**
+
+* The implementation works correctly and performs all required tasks.
+* However, the shortcut behavior is tailored more toward macOS — it's unclear how it will behave on Windows/Linux. JavaFX provides ways to handle this cross-platform.
+* There’s also a **logic issue** with "Expand All" and "Collapse All":
+
+  > If you select something, the word cloud updates — but when you expand or collapse, the selection **visually disappears** from the TreeView while the word cloud **still shows data**. This causes a **sync issue**.
+
+#### ✅ Fix applied:
+
+To resolve this, I modified the code so that when a user expands or collapses:
+
+* **Selection is cleared**
+* **Word cloud is also cleared**
+
+This ensures UI and data remain in sync.
+
+#### ✏️ Step 1: Change method signatures
+
+```java
+// OLD
+private void expandTreeView(TreeView<ANode> treeView);
+private void collapseTreeView(TreeView<ANode> treeView);
+
+// NEW
+private void expandTreeView(WindowController controller);
+private void collapseTreeView(WindowController controller);
+```
+
+---
+
+#### ✏️ Step 2: Update their contents
+
+```java
+private void expandTreeView(WindowController controller) {
+    TreeView<ANode> treeView = controller.getTreeView();
+    var selectedNodes = treeView.getSelectionModel().getSelectedItems();
+
+    if (selectedNodes.isEmpty()) {
+        expandAllBelowGivenNode(treeView.getRoot());
+    } else {
+        for (TreeItem<ANode> node : selectedNodes) {
+            expandAllBelowGivenNode(node);
+        }
+    }
+
+    treeView.getSelectionModel().clearSelection();     // Clear selection
+    controller.getFlowPane().getChildren().clear();    // Clear word cloud
+}
+
+private void collapseTreeView(WindowController controller) {
+    TreeView<ANode> treeView = controller.getTreeView();
+    var selectedNodes = treeView.getSelectionModel().getSelectedItems();
+
+    if (selectedNodes.isEmpty()) {
+        collapseAllNodesUptToGivenNode(treeView.getRoot());
+    } else {
+        for (TreeItem<ANode> node : selectedNodes) {
+            collapseAllNodesUptToGivenNode(node);
+        }
+    }
+
+    treeView.getSelectionModel().clearSelection();     // Clear selection
+    controller.getFlowPane().getChildren().clear();    // Clear word cloud
+}
+```
+
+---
+
+#### ✏️ Step 3: Update handler calls
+
+```java
+// OLD
+controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView()));
+controller.getMenuItemCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView()));
+controller.getButtonExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView()));
+controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView()));
+
+// NEW
+controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller));
+controller.getMenuItemCollapseAll().setOnAction(e -> collapseTreeView(controller));
+controller.getButtonExpandAll().setOnAction(e -> expandTreeView(controller));
+controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller));
+```
+
+---
+
+### 🚧 Note
+
+> There is still a potential performance issue:
+> When attempting to generate a word cloud for the **entire tree**, your app consumes significant memory and may crash on lower-end machines.
+> You may want to look into optimizing how large selections are handled (e.g., lazy layout, limiting words, caching, etc.).
+> collapseAll still have some issues.
+ 
+
+
+**Points:** 3/3
+
+---
+
+### **Task 5 – Design**
+
+All required menu items are present and correctly implemented.
+
+**Points:** 1/1
+
+---
+
+### ✅ **Total: 10/10**
+
+
 

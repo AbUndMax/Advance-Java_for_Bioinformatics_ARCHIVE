@@ -16,16 +16,16 @@ import java.util.Arrays;
 
 public class WindowPresenter {
     public WindowPresenter(Stage stage, WindowController controller, Model model) {
-        //here we assign actions to the buttons
+        // here we assign actions to the buttons
         controller.getMenuItemClose().setOnAction(e -> Platform.exit());
 
-        controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView()));
-        controller.getMenuItemCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView()));
+        controller.getMenuItemExpandAll().setOnAction(e -> expandTreeView(controller));
+        controller.getMenuItemCollapseAll().setOnAction(e -> collapseTreeView(controller));
         controller.getMenuItemSelectAll().setOnAction(e -> selectAll(controller.getTreeView()));
         controller.getMenuItemSelectNone().setOnAction(e -> selectNone(controller));
 
-        controller.getButtonExpandAll().setOnAction(e -> expandTreeView(controller.getTreeView()));
-        controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller.getTreeView()));
+        controller.getButtonExpandAll().setOnAction(e -> expandTreeView(controller));
+        controller.getButtonCollapseAll().setOnAction(e -> collapseTreeView(controller));
         controller.getButtonSelectAll().setOnAction(e -> selectAll(controller.getTreeView()));
         controller.getButtonSelectNone().setOnAction(e -> selectNone(controller));
 
@@ -38,21 +38,26 @@ public class WindowPresenter {
      * Expands the TreeView by opening all nodes either completely or based on the selected nodes.
      * If no nodes are selected in the TreeView, all nodes starting from the root are expanded.
      * Otherwise, only the subtrees of the selected nodes are expanded.
+     * After expansion, selection and word cloud are cleared.
      *
-     * @param treeView the TreeView containing the nodes to be expanded
+     * @param controller the WindowController providing access to the TreeView and FlowPane
      */
-    private void expandTreeView(TreeView<ANode> treeView) {
-        // check whether any node is selected - if none is selected, expand all
+    private void expandTreeView(WindowController controller) {
+        TreeView<ANode> treeView = controller.getTreeView();
+
         ObservableList<TreeItem<ANode>> selectedNodes = treeView.getSelectionModel().getSelectedItems();
 
         if (selectedNodes.isEmpty()) {
             expandAllBelowGivenNode(treeView.getRoot());
-
         } else {
             for (TreeItem<ANode> selectedNode : selectedNodes) {
                 expandAllBelowGivenNode(selectedNode);
             }
         }
+
+        // Clear selection and word cloud
+        treeView.getSelectionModel().clearSelection();
+        controller.getFlowPane().getChildren().clear();
     }
 
     /**
@@ -74,10 +79,13 @@ public class WindowPresenter {
      * Collapses the TreeView by closing all nodes either completely or based on the selected nodes.
      * If no nodes are selected in the TreeView, all nodes starting from the root are collapsed.
      * Otherwise, only the subtrees of the selected nodes are collapsed.
+     * After collapsing, selection and word cloud are cleared.
      *
-     * @param treeView the TreeView containing the nodes to be collapsed
+     * @param controller the WindowController providing access to the TreeView and FlowPane
      */
-    private void collapseTreeView(TreeView<ANode> treeView) {
+    private void collapseTreeView(WindowController controller) {
+        TreeView<ANode> treeView = controller.getTreeView();
+
         ObservableList<TreeItem<ANode>> selectedNodes = treeView.getSelectionModel().getSelectedItems();
 
         if (selectedNodes.isEmpty()) {
@@ -87,6 +95,10 @@ public class WindowPresenter {
                 collapseAllNodesUptToGivenNode(selectedNode);
             }
         }
+
+        // Clear selection and word cloud
+        treeView.getSelectionModel().clearSelection();
+        controller.getFlowPane().getChildren().clear();
     }
 
     /**
@@ -122,7 +134,6 @@ public class WindowPresenter {
                 selectAllRecursive(selectedNode, selectionModel);
             }
         }
-
     }
 
     /**
@@ -191,6 +202,4 @@ public class WindowPresenter {
         // Add all labels at once to reduce layout recalculations
         flowPane.getChildren().setAll(labels);
     }
-
-
 }
