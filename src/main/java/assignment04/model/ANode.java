@@ -78,7 +78,7 @@ public class ANode {
         return name + " (" + conceptId + ")";
     }
 
-    protected void addChild(ANode child) {
+    public void addChild(ANode child) {
         children.add(child);
     }
 

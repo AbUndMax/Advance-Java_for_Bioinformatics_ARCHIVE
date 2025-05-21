@@ -69,6 +69,8 @@ public class DrawCladogram {
         //generate the nodes, edges, labels
         generateGroupsRec(root, nodes, edges, labels, scaledMap, height, numberOfLeaves);
 
+        nodes.getChildren().remove(1);
+
         return new Group(nodes, edges, labels);
     }
 
