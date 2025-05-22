@@ -6,7 +6,7 @@
 
     <groupId>org.example</groupId>
     <artifactId>AdJa_git_classroom</artifactId>
-    <version>Assignment.01</version>
+    <version>5.0</version>
 
     <properties>
         <maven.compiler.release>24</maven.compiler.release>
@@ -71,6 +71,15 @@
                         </goals>
                         <configuration>
                             <mainClass>assignment04.TreeDrawer</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>objectViewer</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>assignment05.ObjectViewer</mainClass>
                         </configuration>
                     </execution>
                 </executions>

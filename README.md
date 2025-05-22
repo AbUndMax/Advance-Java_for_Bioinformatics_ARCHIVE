@@ -21,3 +21,7 @@ run `mvn clean javafx:run@wordExplorer`
 
 ### assignment04: TreeDrawer
 run `mvn clean javafx:run@treeDrawer`
+
+### assignment05: ObjectViewer
+- run `mvn clean javafx:run@objectViewer`
+- Written answers at: `src/main/java(assignemnt05/README_asgmt05.md`

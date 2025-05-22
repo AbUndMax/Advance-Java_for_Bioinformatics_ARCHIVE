@@ -9,4 +9,7 @@ module AdJa.git.classroom {
 
     opens assignment04.window to javafx.fxml;
     exports assignment04;
+
+    opens assignment05.window to javafx.fxml;
+    exports assignment05;
 }
