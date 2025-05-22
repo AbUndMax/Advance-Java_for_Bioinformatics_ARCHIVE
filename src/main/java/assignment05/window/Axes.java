@@ -14,31 +14,25 @@ import javafx.scene.transform.Rotate;
  */
 public class Axes extends Group {
 
-    //will we allow modification of length post-creation of Axes? probably not
-    private final double length;
-    public double getLength() {return length;}
-
-
     public Axes(double length) {
-        this.length = length;
 
         //X-axis
         this.getChildren().add(
                 rotateShape3D(
-                        makeCylinderVec(20, makePhongMaterialW(Color.RED)),
+                        makeCylinderVec(length, makePhongMaterialW(Color.RED)),
                         new Point3D(0,0,1),
                          90.0
         ));
         //Z-axis
         this.getChildren().add(
                 rotateShape3D(
-                        makeCylinderVec(20, makePhongMaterialW(Color.BLUE)),
+                        makeCylinderVec(length, makePhongMaterialW(Color.BLUE)),
                         new Point3D(1,0,0),
                         90.0
         ));
         //Y-axis
         this.getChildren().add(
-                makeCylinderVec(20, makePhongMaterialW(Color.GREEN))
+                makeCylinderVec(length, makePhongMaterialW(Color.GREEN))
                 );
 
         this.getChildren().get(0).setTranslateX(length/2);

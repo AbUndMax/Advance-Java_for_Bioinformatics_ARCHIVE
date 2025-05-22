@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
 import javafx.scene.SceneAntialiasing;
 import javafx.scene.SubScene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -68,6 +69,18 @@ public class WindowPresenter {
         // set close function
         controller.getCloseButton().setOnAction(e -> Platform.exit());
         controller.getCloseMenuItem().setOnAction(e -> Platform.exit());
+
+        // about
+        controller.getAboutMenuItem().setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About");
+            alert.setHeaderText("3D .obj viewer    ＼(◎o◎)／");
+            alert.setContentText("Implemented by Luis Reimer & Niklas Gerbes! \n" +
+                                         "This tool is part of the summer term course \n" +
+                                         "\"Advanced Java for Bioinformatics\" \n" +
+                                         "2025 U. Tübingen by Prof. D. Huson");
+            alert.showAndWait();
+        });
 
     }
 
