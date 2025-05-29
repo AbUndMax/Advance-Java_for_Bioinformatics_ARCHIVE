@@ -2,6 +2,7 @@ module AdJa.git.classroom {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
+    requires java.desktop;
     exports assignment02;
 
     opens assignment03.window to javafx.fxml;

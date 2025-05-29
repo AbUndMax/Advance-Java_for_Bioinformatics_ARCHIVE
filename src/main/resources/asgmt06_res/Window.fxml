@@ -29,6 +29,11 @@
                               <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                            </accelerator>
                         </MenuItem>
+                      <MenuItem fx:id="clearMenuItem" mnemonicParsing="false" text="Clear View">
+                          <accelerator>
+                              <KeyCodeCombination alt="UP" code="X" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+                          </accelerator>
+                      </MenuItem>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
@@ -62,7 +67,8 @@
                         <MenuItem fx:id="rotateDownMenuItem" mnemonicParsing="false" text="Rotate Down">
                            <accelerator>
                               <KeyCodeCombination alt="UP" code="DOWN" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
-                           </accelerator></MenuItem>
+                           </accelerator>
+                        </MenuItem>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
