@@ -1,6 +1,7 @@
 package assignment06.window;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.PerspectiveCamera;
@@ -35,8 +36,12 @@ public class WindowPresenter {
     public WindowPresenter(WindowController controller) {
 
         Group contentGroup = setup3DSubPane(controller);
+        Group innerGroup = new Group();
 
-        contentGroup.getChildren().add(new Axes(20));
+        innerGroup.getChildren().add(new Axes(20));
+        innerGroup.getChildren().addListener((InvalidationListener) e -> GroupTranslations.centerGroupToItself(innerGroup));
+
+        contentGroup.getChildren().add(innerGroup);
         contentGroup.getTransforms().setAll(initialTransform);
 
         // set rotation functions
@@ -85,45 +90,7 @@ public class WindowPresenter {
     }
 
     public static void open(Group contentGroup) {
-        //choose OBJ file
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open OBJ file");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("OBJ file", "*.obj"),
-                new FileChooser.ExtensionFilter("All files", "*.*")
-        );
-
-        File objFile = fileChooser.showOpenDialog(new Stage());
-
-        if (objFile != null) {
-            String objPath = objFile.getAbsolutePath();
-            File imgFile = new File(objPath.substring(0, objPath.length()-3) + "png");
-
-            try {
-                //generate mesh from the OBJ file
-                TriangleMesh mesh = ObjParser.load(objPath);
-                MeshView meshView = new MeshView(mesh);
-
-                PhongMaterial material = new PhongMaterial();
-                material.setSpecularColor(Color.DARKGREY);
-
-                //if image file exists, load image onto mesh
-                if (imgFile.exists()) {
-                    //meshView.setCullFace(CullFace.FRONT); strangely caused the cube to deform when rotating.
-                    material.setDiffuseMap(new Image(imgFile.toURI().toString()));
-                } else {
-                    material.setDiffuseColor(Color.GREEN); //indicating that img
-                }
-
-                //
-                meshView.setMaterial(material);
-                //set the meshView as the content.
-                contentGroup.getChildren().clear();
-                contentGroup.getChildren().add(meshView);
-            } catch (Exception e) {
-                System.err.println("Failed to parse OBJ file");
-            }
-        }
+        OpenOBJ.open(contentGroup);
     }
 
     /**
