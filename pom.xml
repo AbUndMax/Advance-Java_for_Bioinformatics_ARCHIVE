@@ -82,6 +82,15 @@
                             <mainClass>assignment05.ObjectViewer</mainClass>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>objectViewer6</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>assignment06.ObjectViewer6</mainClass>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

@@ -29,3 +29,6 @@ run `mvn clean javafx:run@treeDrawer`
 - run `mvn clean javafx:run@objectViewer`
 - Written answers at: `src/main/java(assignemnt05/README_asgmt05.md`
 ![ObjectViewer.png](img/ObjectViewer.png)
+
+### assignment06: ObjectViewer6
+- run `mvn clean javafx:run@objectViewer6`

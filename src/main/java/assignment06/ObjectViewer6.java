@@ -15,7 +15,7 @@ import javafx.stage.Stage;
  *
  * author: Luis Reimer, Niklas Gerbes
  */
-public class ObjectViewer extends Application {
+public class ObjectViewer6 extends Application {
 
     public void start(Stage primaryStage) throws Exception {
         var view = new WindowView();
