@@ -29,7 +29,7 @@ public class OpenOBJ {
         return meshView;
     }
 
-    public static void open(Group contentGroup) {
+    public static void open(Group group) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open OBJ files");
         fileChooser.getExtensionFilters().addAll(
@@ -53,8 +53,8 @@ public class OpenOBJ {
             }
         }
         //add meshviews from all OBJ files to the content
-        contentGroup.getChildren().clear();
-        contentGroup.getChildren().addAll(meshViews);
+        //contentGroup.getChildren().clear();
+        group.getChildren().addAll(meshViews);
     }
 }
 
