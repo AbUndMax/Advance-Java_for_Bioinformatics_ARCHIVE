@@ -48,10 +48,10 @@ public class WindowPresenter {
         controller.getRotateUpMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1, 0, 0), -rotationStep));
         controller.getRotateDownButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1,0,0), rotationStep));
         controller.getRotateDownMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1,0,0), rotationStep));
-        controller.getRotateLeftButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), rotationStep));
-        controller.getRotateLeftMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), rotationStep));
-        controller.getRotateRightButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1,0), -rotationStep));
-        controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1,0), -rotationStep));
+        controller.getRotateLeftButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 0, 1), rotationStep));
+        controller.getRotateLeftMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 0, 1), rotationStep));
+        controller.getRotateRightButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,0,1), -rotationStep));
+        controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,0,1), -rotationStep));
 
         // set zoom functions
         controller.getZoomInButton().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() + zoomStep));
@@ -157,14 +157,8 @@ public class WindowPresenter {
      * @param angle The angle of rotation in degrees.
      */
     private static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
-        var rotate = new Rotate(angle, axis);
-        if (contentGroup.getTransforms().isEmpty()) {
-            contentGroup.getTransforms().add(rotate);
-        } else {
-            var currentTransform = contentGroup.getTransforms().get(0);
-            currentTransform = rotate.createConcatenation(currentTransform);
-            contentGroup.getTransforms().setAll(currentTransform);
-        }
+        var rotation = new Rotate(angle, axis);
+        contentGroup.getTransforms().add(rotation);
     }
 
     /**
