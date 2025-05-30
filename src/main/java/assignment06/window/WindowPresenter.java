@@ -4,19 +4,19 @@ import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.SubScene;
+import javafx.scene.*;
 import javafx.scene.control.Alert;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.PointLight;
-import javafx.scene.AmbientLight;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+
+import javax.xml.stream.EventFilter;
+import javax.xml.stream.events.XMLEvent;
 
 public class WindowPresenter {
 
@@ -31,6 +31,8 @@ public class WindowPresenter {
     private static final int zoomStep = 50;
     private static final int rotationStep = 10;
 
+
+
     public WindowPresenter(WindowController controller) {
 
         Group contentGroup = setup3DSubPane(controller);
@@ -38,7 +40,8 @@ public class WindowPresenter {
 
         //add self centering property
         innerGroup.getChildren().addListener((InvalidationListener) e -> centerGroupToItself(innerGroup));
-        innerGroup.getChildren().add(new Axes(20));
+        //innerGroup.getChildren().add(new Axes(20));
+        addAxes(innerGroup);
 
         contentGroup.getChildren().add(innerGroup);
         contentGroup.getTransforms().setAll(initialTransform);
@@ -64,6 +67,7 @@ public class WindowPresenter {
         // open obj files
         controller.getOpenMenuItem().setOnAction(e -> OpenOBJ.open(innerGroup));
         controller.getClearMenuItem().setOnAction(e -> clear(innerGroup));
+        controller.getClearButton().setOnAction(e -> clear(innerGroup));
 
         // set close function
         controller.getCloseButton().setOnAction(e -> Platform.exit());
@@ -81,6 +85,8 @@ public class WindowPresenter {
             alert.showAndWait();
         });
 
+        controller.getAddAxesMenuItem().setOnAction(e -> addAxes(innerGroup));
+        controller.getRmAxesMenuItem().setOnAction(e -> {if (hasAxes(innerGroup)) rmAxes(innerGroup);});
 
 
     }
@@ -131,6 +137,7 @@ public class WindowPresenter {
         // Mouse interactions:
         MouseRotate3D.setup(drawPane, contentGroup);
         //add zoom functionality
+        //drawPane.setOnScroll(WindowPresenter::zoomScrolling);
         drawPane.setOnScroll(WindowPresenter::zoomScrolling);
 
         return contentGroup;
@@ -178,7 +185,21 @@ public class WindowPresenter {
 
     private static void zoomScrolling(ScrollEvent event) {
         double deltaY = event.getDeltaY();
-        camera.setTranslateZ(camera.getTranslateZ() + deltaY);
+        if (event.isControlDown()) camera.setTranslateY(camera.getTranslateY() + deltaY);
+        else camera.setTranslateZ(camera.getTranslateZ() + deltaY);
+    }
+    private static void addAxes(Group innergroup) {
+        innergroup.getChildren().add(new Axes(20));
+    }
+
+    private static void rmAxes(Group innergroup) {
+        innergroup.getChildren().removeIf(node -> node instanceof Axes);
+    }
+    private static boolean hasAxes(Group innergroup) {
+        for (Node n : innergroup.getChildren()) {
+            if (n instanceof Axes) return true;
+        }
+        return false;
     }
 
     private static void clear(Group innergroup) {

@@ -8,6 +8,15 @@ import javafx.scene.layout.Pane;
 public class WindowController {
 
     @FXML
+    private MenuItem rmAxesMenuItem;
+
+    @FXML
+    private MenuItem addAxesMenuItem;
+
+    @FXML
+    private Button clearButton;
+
+    @FXML
     private MenuItem clearMenuItem;
 
     @FXML
@@ -66,6 +75,13 @@ public class WindowController {
 
     @FXML
     private MenuItem zoomOutMenuItem;
+
+
+    public MenuItem getRmAxesMenuItem() {return rmAxesMenuItem;}
+
+    public MenuItem getAddAxesMenuItem() {return addAxesMenuItem;}
+
+    public Button getClearButton() {return clearButton;}
 
     public MenuItem getClearMenuItem() {return clearMenuItem;}
 

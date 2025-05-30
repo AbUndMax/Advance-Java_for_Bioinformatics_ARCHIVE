@@ -34,6 +34,8 @@
                               <KeyCodeCombination alt="UP" code="X" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                           </accelerator>
                       </MenuItem>
+                      <MenuItem fx:id="addAxesMenuItem" mnemonicParsing="false" text="Add Axes"/>
+                      <MenuItem fx:id="rmAxesMenuItem" mnemonicParsing="false" text="Remove Axes"/>
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
@@ -93,6 +95,7 @@
                         <Button fx:id="rotateRightButton" mnemonicParsing="false" text="Rotate Right" />
                         <Button fx:id="rotateUpButton" mnemonicParsing="false" text="Rotate Up" />
                         <Button fx:id="rotateDownButton" mnemonicParsing="false" text="Rotate Down" />
+                        <Button fx:id="clearButton" mnemonicParsing="false" text="Clear View"/>
                     </items>
                   </ToolBar>
                </top>
