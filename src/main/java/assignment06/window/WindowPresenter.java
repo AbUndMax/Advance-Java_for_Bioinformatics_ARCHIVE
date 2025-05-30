@@ -85,8 +85,8 @@ public class WindowPresenter {
             alert.showAndWait();
         });
 
-        controller.getAddAxesMenuItem().setOnAction(e -> addAxes(innerGroup));
-        controller.getRmAxesMenuItem().setOnAction(e -> {if (hasAxes(innerGroup)) rmAxes(innerGroup);});
+        controller.getAddAxesMenuItem().setOnAction(e -> {if (!hasAxes(innerGroup))addAxes(innerGroup);});
+        controller.getRmAxesMenuItem().setOnAction(e -> rmAxes(innerGroup));
 
 
     }
