@@ -2,7 +2,7 @@
 
 ---
 
-# Task 5: Explanation how to center group
+# Task 5: Explanation how rotate group around its center
 
 group.getChildren().addListener((IvalidationListener) e -> method())
 
