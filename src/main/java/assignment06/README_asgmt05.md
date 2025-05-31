@@ -12,4 +12,4 @@ When we rotate the group, we want it to rotate around its center point. But the 
 
 double X = (bounds.getMinX() + bounds.getMaxX()) / 2; and so forth for Y and Z.
 
-If X = 0, everything is fine. If X = a != 0, a movement must be applied to X which is of equal magnitude and opposite direction to a (so -a). Thus we apply the new Translate -X -Y -Z) so that X = Y = Z = 0.
+If X = 0, everything is fine. If X = a != 0, a movement must be applied to X which is of equal magnitude and opposite direction of a (so -a). Thus we apply the new Translate (-X -Y -Z) so that X = Y = Z = 0.
