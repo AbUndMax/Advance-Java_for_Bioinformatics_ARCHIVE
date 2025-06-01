@@ -265,4 +265,123 @@ All required menu items are present and correctly implemented.
 ### ✅ **Total: 10/10**
 
 
+---
+
+## 📝 **General Feedback**
+
+You're not using Java resources to load your files properly. Even though your files are in the `resources` directory, you're hardcoding paths like:
+
+```
+./src/main/resources/assignment04/partof_parts_list_e.txt
+```
+
+This should instead be accessed using the resource system:
+
+```java
+getClass().getResource("/assignment04/partof_parts_list_e.txt")
+```
+
+This will allow your application to load files reliably in both development and packaged environments.
+
+---
+
+## 📝 **Assignment 04**
+
+---
+
+### **Task 1**
+
+#### ✅ Functionality & Design:
+
+Everything is implemented as expected and functions correctly.
+
+**✔️ Points: 2 / 2**
+
+---
+
+### **Task 2**
+
+#### ✅ Functionality:
+
+The task works fine overall.
+One small issue: the **root node has no name**, which is acceptable.
+However, in some places, **internal nodes are not aligned with their children (leaves)** — they appear slightly shifted.
+
+**✔️ Points: 4 / 4**
+
+---
+
+### **Task 3**
+
+#### ✅ Functionality:
+
+The implementation behaves as expected without any issues.
+
+**✔️ Points: 4 / 4**
+
+---
+
+### **Task 4**
+
+#### ✅ Functionality:
+
+It's nice that you implemented Newick export — it works correctly.
+Also great that you added a **filtering feature** — that’s a useful addition.
+
+---
+
+**✅ Total: 10 / 10**
+
+---
+
+## 📝 **Assignment 05**
+
+---
+
+### **Task 1**
+
+#### ✅ Functionality & Design:
+
+The implementation works as required.
+However, the 3D object still doesn't appear **properly centered** in the view.
+
+**✔️ Points: 4 / 4**
+
+---
+
+### **Task 2**
+
+#### ✅ Functionality:
+
+Works as expected — no issues found.
+
+**✔️ Points: 3 / 3**
+
+---
+
+### **Task 3**
+
+#### ✅ Explanation:
+
+The explanation of the `.obj` file format is clear and correct.
+
+**✔️ Points: 1 / 1**
+
+---
+
+### **Task 4**
+
+#### ✅ Functionality:
+
+It works fine overall, but:
+
+* When loading a **new OBJ file**, it **starts from the same position** — you need to reset the view/camera.
+* The **head model appears upside down**, indicating a likely issue with axis orientation.
+* Also, when loading the skull, then the map, and clicking "Reset", the centering becomes misaligned — your centering logic needs refinement to handle switching between models correctly.
+
+**✔️ Points: 2 / 2**
+
+---
+
+**✅ Total: 10 / 10**
 
