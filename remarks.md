@@ -382,6 +382,17 @@ It works fine overall, but:
 **✔️ Points: 2 / 2**
 
 ---
+### Important
+
+#### 🔁 **Correction (applies to Assignment 05):**
+
+The class `ObjParser` should be placed in the **`model`** package, not in the `window` package.
+It is a **data parsing and logic class**, and therefore belongs in the **model layer**, not the UI/view layer.
+
+Keeping the class in the correct package helps maintain **clean architecture and separation of concerns** (Model–View–Presentor principle).
+
+---
+
 
 **✅ Total: 10 / 10**
 
