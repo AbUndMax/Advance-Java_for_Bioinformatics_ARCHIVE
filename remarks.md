@@ -329,7 +329,7 @@ It's nice that you implemented Newick export — it works correctly.
 Also great that you added a **filtering feature** — that’s a useful addition.
 
 ---
-
+except ANode nothing else belong to that class, all other classes can be part of TreeLoader. 
 **✅ Total: 10 / 10**
 
 ---
