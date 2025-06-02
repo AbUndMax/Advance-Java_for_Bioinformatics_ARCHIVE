@@ -1,11 +1,13 @@
 package assignment06.window;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
+import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
@@ -29,7 +31,7 @@ public class OpenOBJ {
         return meshView;
     }
 
-    public static void open(Group group) {
+    public static void open(Group group, MyCamera camera) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open OBJ files");
         fileChooser.getExtensionFilters().addAll(
@@ -37,7 +39,11 @@ public class OpenOBJ {
                 new FileChooser.ExtensionFilter("All files", "*.*")
         );
 
-        List<File> objFiles = fileChooser.showOpenMultipleDialog(new Stage()); //choose OBJ files
+        List<File> objFiles = fileChooser.showOpenMultipleDialog(new Stage()); // choose OBJ files
+        if (objFiles == null || objFiles.isEmpty()) {
+            return; // Exit early if no files are selected
+        }
+
         List<MeshView> meshViews = new LinkedList<>();  //will hold MeshViews of the parsed OBJ files
 
         for (File objFile : objFiles) {
@@ -52,9 +58,28 @@ public class OpenOBJ {
                 }
             }
         }
+
         //add meshviews from all OBJ files to the content
-        //contentGroup.getChildren().clear();
+        group.getChildren().clear();
         group.getChildren().addAll(meshViews);
+
+        centerGroupToItself(group);
+        camera.focusFullFigure(group);
+    }
+
+    /**
+     * Centers the specified 3D group to its own local bounding box.
+     * This method calculates the center point of the group's local bounds
+     * and applies a translation to shift the group so that its center aligns with the origin.
+     *
+     * @param group The 3D group to be centered relative to its local coordinate system.
+     */
+    public static void centerGroupToItself(Group group) {
+        Bounds bounds = group.getBoundsInLocal();
+        double X = (bounds.getMinX() + bounds.getMaxX()) / 2;
+        double Y = (bounds.getMinY() + bounds.getMaxY()) / 2;
+        double Z = (bounds.getMinZ() + bounds.getMaxZ()) / 2;
+        group.getTransforms().setAll(new Translate(-X, -Y, -Z));
     }
 }
 
