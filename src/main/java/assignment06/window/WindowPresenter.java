@@ -1,45 +1,41 @@
 package assignment06.window;
 
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Translate;
-
-import javax.xml.stream.EventFilter;
-import javax.xml.stream.events.XMLEvent;
 
 public class WindowPresenter {
 
-    private static final PerspectiveCamera camera = new PerspectiveCamera(true);
+    private static final MyCamera camera = new MyCamera();
     // initial view on the tripod is saved as Affine. It is also used as reset position.
     private static final Affine initialTransform = new Affine(
             1.0, 0.0, 0.0, 0.0,
 	        0.0, 0.0, -1.0, 0.0,
             0.0, 1, 0.0, 0.0
     );
-    private static final int initialCameraPosition = (-1500);
-    private static final int zoomStep = 50;
     private static final int rotationStep = 10;
 
 
-
+    /**
+     * Constructs a WindowPresenter object to control and manage the interaction
+     * with the 3D scene and related UI components within the application.
+     * This class sets up interactive functionalities for 3D viewing, rotation, zooming,
+     * and file handling, along with cleaning up and closing the application.
+     *
+     * @param controller The WindowController instance that contains the UI components
+     *                   and actions for interacting with the 3D viewer.
+     */
     public WindowPresenter(WindowController controller) {
 
         Group contentGroup = setup3DSubPane(controller);
         Group innerGroup = new Group();
 
-        //add self centering property
-        innerGroup.getChildren().addListener((InvalidationListener) e -> centerGroupToItself(innerGroup));
         //innerGroup.getChildren().add(new Axes(20));
         addAxes(innerGroup);
 
@@ -51,21 +47,21 @@ public class WindowPresenter {
         controller.getRotateUpMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1, 0, 0), -rotationStep));
         controller.getRotateDownButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1,0,0), rotationStep));
         controller.getRotateDownMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1,0,0), rotationStep));
-        controller.getRotateLeftButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 0, 1), rotationStep));
-        controller.getRotateLeftMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 0, 1), rotationStep));
-        controller.getRotateRightButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,0,1), -rotationStep));
-        controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,0,1), -rotationStep));
+        controller.getRotateLeftButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), rotationStep));
+        controller.getRotateLeftMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), rotationStep));
+        controller.getRotateRightButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1, 0), -rotationStep));
+        controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1, 0), -rotationStep));
 
         // set zoom functions
-        controller.getZoomInButton().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() + zoomStep));
-        controller.getZoomInMenuItem().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() + zoomStep));
-        controller.getZoomOutButton().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() - zoomStep));
-        controller.getZoomOutMenuItem().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() - zoomStep));
+        controller.getZoomInButton().setOnAction(e -> camera.zoomIn());
+        controller.getZoomInMenuItem().setOnAction(e -> camera.zoomIn());
+        controller.getZoomOutButton().setOnAction(e -> camera.zoomOut());
+        controller.getZoomOutMenuItem().setOnAction(e -> camera.zoomOut());
         controller.getResetButton().setOnAction(e -> resetView(contentGroup));
         controller.getResetMenuItem().setOnAction(e -> resetView(contentGroup));
 
         // open obj files
-        controller.getOpenMenuItem().setOnAction(e -> OpenOBJ.open(innerGroup));
+        controller.getOpenMenuItem().setOnAction(e -> ObjIO.open(innerGroup, camera));
         controller.getClearMenuItem().setOnAction(e -> clear(innerGroup));
         controller.getClearButton().setOnAction(e -> clear(innerGroup));
 
@@ -87,8 +83,6 @@ public class WindowPresenter {
 
         controller.getAddAxesMenuItem().setOnAction(e -> {if (!hasAxes(innerGroup))addAxes(innerGroup);});
         controller.getRmAxesMenuItem().setOnAction(e -> rmAxes(innerGroup));
-
-
     }
 
     /**
@@ -114,10 +108,6 @@ public class WindowPresenter {
         subScene.setFill(Color.LIGHTGRAY);
 
         // add camera
-        camera.setFarClip(10000);
-        camera.setNearClip(0.1);
-        camera.setTranslateZ(initialCameraPosition); // back away from the origin ...
-        camera.setTranslateY(-10); // move the camera a little bit up to center the objects
         subScene.setCamera(camera);
 
         // Add PointLight
@@ -150,51 +140,78 @@ public class WindowPresenter {
      * @param contentGroup The group of 3D content whose transformations will be reset.
      */
     private static void resetView(Group contentGroup) {
-        camera.setTranslateZ(initialCameraPosition);
+        camera.resetView();
         contentGroup.getTransforms().setAll(initialTransform);
     }
 
     /**
-     * Applies a global rotation to the given content group around a specified axis by a given angle.
-     * If the group does not already have transforms, the rotation transform is added.
-     * If the group has existing transforms, the rotation is concatenated to the current transforms.
+     * Applies a global rotation transformation to the specified 3D content group.
+     * This method rotates the group around the given axis by the specified angle
+     * and updates its transformation accordingly.
      *
-     * @param contentGroup The group of 3D objects to which the rotation will be applied.
-     * @param axis The axis of rotation specified as a {@code Point3D}.
-     * @param angle The angle of rotation in degrees.
+     * @param contentGroup The group of 3D content to which the rotation transformation
+     *                     will be applied.
+     * @param axis The axis around which the 3D content group will be rotated, represented
+     *             as a {@code Point3D}.
+     * @param angle The rotation angle in degrees to apply to the 3D content group.
      */
-    private static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
-        var rotation = new Rotate(angle, axis);
-        contentGroup.getTransforms().add(rotation);
+    protected static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
+        var currentTransform = contentGroup.getTransforms().getFirst();
+        var rotate = new Rotate(angle, axis);
+        currentTransform = rotate.createConcatenation(currentTransform);
+        contentGroup.getTransforms().setAll(currentTransform);
     }
 
     /**
-     * Centers the specified 3D group to its own local bounding box.
-     * This method calculates the center point of the group's local bounds
-     * and applies a translation to shift the group so that its center aligns with the origin.
+     * Handles zoom functionality for 3D navigation in response to scroll events.
+     * Depending on user input, adjusts either the Z-axis or Y-axis translation
+     * of the camera to zoom and pan within the 3D scene.
      *
-     * @param group The 3D group to be centered relative to its local coordinate system.
+     * @param event The scroll event containing details such as scroll direction,
+     *              scroll distance, and modifier keys that are pressed.
      */
-    public static void centerGroupToItself(Group group) {
-        Bounds bounds = group.getBoundsInLocal();
-        double X = (bounds.getMinX() + bounds.getMaxX()) / 2;
-        double Y = (bounds.getMinY() + bounds.getMaxY()) / 2;
-        double Z = (bounds.getMinZ() + bounds.getMaxZ()) / 2;
-        group.getTransforms().setAll(new Translate(-X, -Y, -Z));
-    }
-
     private static void zoomScrolling(ScrollEvent event) {
         double deltaY = event.getDeltaY();
-        if (event.isControlDown()) camera.setTranslateY(camera.getTranslateY() + deltaY);
-        else camera.setTranslateZ(camera.getTranslateZ() + deltaY);
+        double deltaX = event.getDeltaX();
+        if (event.isShiftDown()) {
+            camera.setTranslateY(camera.getTranslateY() + deltaY);
+            camera.setTranslateX(camera.getTranslateX() + deltaX);
+        }
+        else camera.zoom(deltaY);
     }
+
+    /**
+     * Adds a set of 3D {@code Axes} to the specified group. The axes are representing a tripod
+     *
+     * @param innergroup The group to which the axes will be added. This group
+     *                   will visually represent the 3D coordinate system with
+     *                   the added axes for orientation.
+     */
     private static void addAxes(Group innergroup) {
         innergroup.getChildren().add(new Axes(20));
     }
 
+    /**
+     * Removes all instances of {@code Axes} from the specified {@code Group}.
+     * This method iterates through the child nodes of the group and filters out
+     * any nodes that are instances of the {@code Axes} class, effectively clearing
+     * any 3D axes previously added to the group.
+     *
+     * @param innergroup The {@code Group} from which all instances of {@code Axes}
+     *                   will be removed.
+     */
     private static void rmAxes(Group innergroup) {
         innergroup.getChildren().removeIf(node -> node instanceof Axes);
     }
+
+    /**
+     * Checks if the specified {@code Group} contains any instances of the {@code Axes} class.
+     * Iterates through the child nodes of the given group and evaluates whether
+     * any of them are an instance of {@code Axes}.
+     *
+     * @param innergroup The {@code Group} to be inspected for the presence of {@code Axes} instances.
+     * @return {@code true} if the group contains one or more instances of {@code Axes}, otherwise {@code false}.
+     */
     private static boolean hasAxes(Group innergroup) {
         for (Node n : innergroup.getChildren()) {
             if (n instanceof Axes) return true;
@@ -202,6 +219,13 @@ public class WindowPresenter {
         return false;
     }
 
+    /**
+     * Clears all child nodes from the specified 3D {@code Group}.
+     * This method removes all objects present in the group, effectively resetting it to an empty state.
+     *
+     * @param innergroup The {@code Group} whose child nodes will be removed.
+     *                   Modifications to this group will affect its visual content in the scene.
+     */
     private static void clear(Group innergroup) {
         innergroup.getChildren().clear();
     }

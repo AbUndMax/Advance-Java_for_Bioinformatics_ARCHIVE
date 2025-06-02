@@ -37,7 +37,7 @@ public class Axes extends Group {
 
         this.getChildren().get(0).setTranslateX(length/2);
         this.getChildren().get(1).setTranslateZ(length/2);
-        this.getChildren().get(2).setTranslateY(length/2);
+        this.getChildren().get(2).setTranslateY(-length/2);
 
     }
 

@@ -16,10 +16,10 @@ public class MouseRotate3D {
         pane.setOnMouseDragged(e -> {
             var dx = e.getSceneX() - xPrev;
             var dy = e.getSceneY() - yPrev;
-            var axis = new Point3D(dy, 0, dx).normalize();
+            var axis = new Point3D(dy, -dx, 0).normalize();
             var angle = Math.sqrt(dx * dx + dy * dy) * 0.5; // based on the distance of the mouse movement
 
-            figure.getTransforms().add(new javafx.scene.transform.Rotate(angle, axis));
+            WindowPresenter.applyGlobalRotation(figure, axis, angle);
 
             xPrev = e.getSceneX();
             yPrev = e.getSceneY();
