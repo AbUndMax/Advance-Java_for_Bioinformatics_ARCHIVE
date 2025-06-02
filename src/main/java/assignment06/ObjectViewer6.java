@@ -6,7 +6,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * The ObjectViewer class serves as the main entry point for launching the
+ * The ObjectViewer6 class serves as the main entry point for launching the
  * Object Viewer application. It initializes the primary stage with a specified
  * scene containing a 3D object viewer interface.
  *
@@ -19,7 +19,7 @@ public class ObjectViewer6 extends Application {
 
     public void start(Stage primaryStage) throws Exception {
         var view = new WindowView();
-        var presenter = new WindowPresenter(view.getController());
+        new WindowPresenter(view.getController());
 
         primaryStage.setTitle("Object Viewer");
         primaryStage.setScene(new javafx.scene.Scene(view.getRoot(), 800, 600));

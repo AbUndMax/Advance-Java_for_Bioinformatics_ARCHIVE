@@ -6,17 +6,12 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.control.Alert;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
-
-import javax.xml.stream.EventFilter;
-import javax.xml.stream.events.XMLEvent;
 
 public class WindowPresenter {
 
@@ -51,10 +46,10 @@ public class WindowPresenter {
         controller.getRotateUpMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1, 0, 0), -rotationStep));
         controller.getRotateDownButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1,0,0), rotationStep));
         controller.getRotateDownMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(1,0,0), rotationStep));
-        controller.getRotateLeftButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 0, 1), rotationStep));
-        controller.getRotateLeftMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 0, 1), rotationStep));
-        controller.getRotateRightButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,0,1), -rotationStep));
-        controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,0,1), -rotationStep));
+        controller.getRotateLeftButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), rotationStep));
+        controller.getRotateLeftMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), rotationStep));
+        controller.getRotateRightButton().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1, 0), -rotationStep));
+        controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1, 0), -rotationStep));
 
         // set zoom functions
         controller.getZoomInButton().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() + zoomStep));
@@ -155,17 +150,21 @@ public class WindowPresenter {
     }
 
     /**
-     * Applies a global rotation to the given content group around a specified axis by a given angle.
-     * If the group does not already have transforms, the rotation transform is added.
-     * If the group has existing transforms, the rotation is concatenated to the current transforms.
+     * Applies a global rotation transformation to the specified 3D content group.
+     * This method rotates the group around the given axis by the specified angle
+     * and updates its transformation accordingly.
      *
-     * @param contentGroup The group of 3D objects to which the rotation will be applied.
-     * @param axis The axis of rotation specified as a {@code Point3D}.
-     * @param angle The angle of rotation in degrees.
+     * @param contentGroup The group of 3D content to which the rotation transformation
+     *                     will be applied.
+     * @param axis The axis around which the 3D content group will be rotated, represented
+     *             as a {@code Point3D}.
+     * @param angle The rotation angle in degrees to apply to the 3D content group.
      */
-    private static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
-        var rotation = new Rotate(angle, axis);
-        contentGroup.getTransforms().add(rotation);
+    protected static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
+        var currentTransform = contentGroup.getTransforms().getFirst();
+        var rotate = new Rotate(angle, axis);
+        currentTransform = rotate.createConcatenation(currentTransform);
+        contentGroup.getTransforms().setAll(currentTransform);
     }
 
     /**
