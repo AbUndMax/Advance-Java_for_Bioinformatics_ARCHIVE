@@ -13,6 +13,7 @@ public class MyCamera extends PerspectiveCamera {
 
     // reset Position the camera returns to after pressing the reset button
     private double resetPositionInZ = -400;
+    private double zoomFactor = 1;
 
     /**
      * Constructs an instance of the MyCamera class, extending PerspectiveCamera
@@ -33,12 +34,22 @@ public class MyCamera extends PerspectiveCamera {
     }
 
     /**
-     * Resets the camera's position in the 3D scene to its initial state.
-     * This method updates the camera's Z-axis translation to the predefined reset position,
-     * which is determined by the current value of the resetPositionInZ field.
+     * Resets the camera's position to its predefined initial state.
+     *
+     * The method adjusts the camera's translation along the X, Y, and Z axes
+     * to restore its default position:
+     * - The Z-axis translation is reset to the value of `resetPositionInZ`,
+     *   which represents the camera's original position along the depth axis.
+     * - The X and Y-axis translations are reset to zero, centering the camera
+     *   horizontally and vertically in the 3D scene.
+     *
+     * This is typically used to return the camera to an overview position
+     * after it has been moved or adjusted during user interaction or other operations.
      */
     public void resetView(){
         this.setTranslateZ(resetPositionInZ);
+        this.setTranslateY(0);
+        this.setTranslateX(0);
     }
 
     /**
@@ -58,12 +69,26 @@ public class MyCamera extends PerspectiveCamera {
         double depth = bounds.getDepth() / 2;
         double width = bounds.getWidth() / 2;
         double height = bounds.getHeight() / 2;
+        double longestEdge = Math.max(depth, Math.max(width, height));
         double fovY = this.getFieldOfView();
 
-        double requiredDistance = (Math.max(depth, Math.max(width, height))) / Math.tan(Math.toRadians(fovY / 2));
+        double requiredDistance = (longestEdge) / Math.tan(Math.toRadians(fovY / 2));
         requiredDistance *= 1.5; // add some free space to the FOV
 
         this.resetPositionInZ = -requiredDistance;
+        this.zoomFactor = Math.max(1, longestEdge * 0.03);
         this.resetView();
+    }
+
+    public void zoomIn() {
+        this.setTranslateZ(this.getTranslateZ() + zoomFactor * 10);
+    }
+
+    public void zoomOut() {
+        this.setTranslateZ(this.getTranslateZ() - zoomFactor * 10);
+    }
+
+    public void zoom(double zoom) {
+        this.setTranslateZ(this.getTranslateZ() + zoom * zoomFactor);
     }
 }

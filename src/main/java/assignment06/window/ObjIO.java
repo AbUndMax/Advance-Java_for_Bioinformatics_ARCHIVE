@@ -14,7 +14,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-public class OpenOBJ {
+public class ObjIO {
 
     public static MeshView createMeshWithIMG(TriangleMesh mesh, File image) {
         MeshView meshView = new MeshView(mesh);
@@ -60,7 +60,7 @@ public class OpenOBJ {
         }
 
         //add meshviews from all OBJ files to the content
-        group.getChildren().clear();
+        // group.getChildren().clear();
         group.getChildren().addAll(meshViews);
 
         centerGroupToItself(group);

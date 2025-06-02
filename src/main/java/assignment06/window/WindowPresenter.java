@@ -19,7 +19,6 @@ public class WindowPresenter {
 	        0.0, 0.0, -1.0, 0.0,
             0.0, 1, 0.0, 0.0
     );
-    private static final int zoomStep = 50;
     private static final int rotationStep = 10;
 
 
@@ -54,15 +53,15 @@ public class WindowPresenter {
         controller.getRotateRightMenuItem().setOnAction(e -> applyGlobalRotation(contentGroup, new Point3D(0,1, 0), -rotationStep));
 
         // set zoom functions
-        controller.getZoomInButton().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() + zoomStep));
-        controller.getZoomInMenuItem().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() + zoomStep));
-        controller.getZoomOutButton().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() - zoomStep));
-        controller.getZoomOutMenuItem().setOnAction(e -> camera.setTranslateZ(camera.getTranslateZ() - zoomStep));
+        controller.getZoomInButton().setOnAction(e -> camera.zoomIn());
+        controller.getZoomInMenuItem().setOnAction(e -> camera.zoomIn());
+        controller.getZoomOutButton().setOnAction(e -> camera.zoomOut());
+        controller.getZoomOutMenuItem().setOnAction(e -> camera.zoomOut());
         controller.getResetButton().setOnAction(e -> resetView(contentGroup));
         controller.getResetMenuItem().setOnAction(e -> resetView(contentGroup));
 
         // open obj files
-        controller.getOpenMenuItem().setOnAction(e -> OpenOBJ.open(innerGroup, camera));
+        controller.getOpenMenuItem().setOnAction(e -> ObjIO.open(innerGroup, camera));
         controller.getClearMenuItem().setOnAction(e -> clear(innerGroup));
         controller.getClearButton().setOnAction(e -> clear(innerGroup));
 
@@ -173,8 +172,12 @@ public class WindowPresenter {
      */
     private static void zoomScrolling(ScrollEvent event) {
         double deltaY = event.getDeltaY();
-        if (event.isControlDown()) camera.setTranslateY(camera.getTranslateY() + deltaY);
-        else camera.setTranslateZ(camera.getTranslateZ() + deltaY);
+        double deltaX = event.getDeltaX();
+        if (event.isShiftDown()) {
+            camera.setTranslateY(camera.getTranslateY() + deltaY);
+            camera.setTranslateX(camera.getTranslateX() + deltaX);
+        }
+        else camera.zoom(deltaY);
     }
 
     /**
