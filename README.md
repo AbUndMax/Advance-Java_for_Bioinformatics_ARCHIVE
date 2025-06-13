@@ -12,7 +12,7 @@ those informations are fund in the READMEs of the respective assignments folders
 see `src/main/java/assignment01/README_asgmt01.md`.
 
 ### assignment02: AnatomyDataExplorer
-run: `mvn javafx:run@anatomyDataExplorer`
+run: `cd assignemnts && mvn clean javafx:anatomyDaraExplorer`
 ![AnatomyDataExplorer.png](img/AnatomyDataExplorer.png)
 
 ### assignemnt03: WordExplorer

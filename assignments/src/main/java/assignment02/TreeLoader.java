@@ -1,8 +1,12 @@
 package assignment02;
 
-import java.io.*;
-import java.util.*;
 import assignment01.Relation;
+
+import java.io.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 /**
  * Utility class responsible for loading a tree structure from tab-separated data files.

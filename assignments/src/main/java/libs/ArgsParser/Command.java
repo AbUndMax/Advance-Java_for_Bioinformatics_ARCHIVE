@@ -1,7 +1,5 @@
 package libs.ArgsParser;
 
-import libs.ArgsParser.ArgsParser;
-
 public class Command {
     private final String fullCommandName;
     private final String shortCommandName;

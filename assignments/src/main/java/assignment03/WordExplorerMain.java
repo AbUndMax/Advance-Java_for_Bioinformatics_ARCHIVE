@@ -4,7 +4,7 @@ import assignment03.model.Model;
 import assignment03.window.WindowPresenter;
 import assignment03.window.WindowView;
 import javafx.application.Application;
-import javafx.stage.*;
+import javafx.stage.Stage;
 
 /**
  *

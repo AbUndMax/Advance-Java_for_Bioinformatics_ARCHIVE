@@ -1,8 +1,9 @@
-package assignment06.window;
+package assignment05.window;
 
 
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.shape.VertexFormat;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
