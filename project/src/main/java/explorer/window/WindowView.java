@@ -1,8 +1,6 @@
 package explorer.window;
 
-import explorer.window.controller.MainController;
-import explorer.window.controller.SelectionController;
-import explorer.window.controller.VisualizationController;
+import explorer.window.controller.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
@@ -12,8 +10,8 @@ import java.net.URL;
 public class WindowView {
     private final Parent root;
     private final MainController mainController;
-    private final SelectionController selectionTabController;
-    private final VisualizationController visualizationTabController;
+    private final SelectionController selectionController;
+    private final VisualizationController visualizationController;
 
     public WindowView() throws IOException {
         URL mainFXML = getClass().getResource("/fxml/Main.fxml");
@@ -21,8 +19,8 @@ public class WindowView {
         root = loader.load();
         mainController = loader.getController();
 
-        selectionTabController = loadController("/fxml/Selection.fxml");
-        visualizationTabController = loadController("/fxml/Visualization.fxml");
+        selectionController = loadController("/fxml/Selection.fxml");
+        visualizationController = loadController("/fxml/Visualization.fxml");
     }
 
     private <T> T loadController(String resourcePath) throws IOException {
@@ -34,6 +32,6 @@ public class WindowView {
 
     public Parent getRoot() { return root; }
     public MainController getMainController() {return mainController; }
-    public SelectionController getSelectionTabController() {return selectionTabController; }
-    public VisualizationController getVisualizationTabController() {return visualizationTabController; }
+    public SelectionController getSelectionController() {return selectionController; }
+    public VisualizationController getVisualizationController() {return visualizationController; }
 }
