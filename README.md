@@ -1,36 +1,41 @@
 # Advanced Java Repository of Niklas M. Gerbes
 Group: Luis Reimer, Niklas Gerbes
 
-## Hand-in:
-The assignment Hand-ins can be found in `src/main/java/`.
-If any additional information is required to run the script for a specific assignment, 
-those informations are fund in the READMEs of the respective assignments folders.
+## NOTE:
+The whole project structure was rebuild to better manage the final project itself!
 
-## Running assignment implementations:
+- ALL ASSIGNMENTS ARE NOW FOUND IN THE MODULE: `assignmnets`
+- THE PROJECT IS FOUND IN THE MODULE: `project`
+
+Additional information can be found in the READMES of these modules!
+
+
+## Project:
+
+
+## Assignment implementations:
 
 ### assignment01: ShowRelationsTree
-see `src/main/java/assignment01/README_asgmt01.md`.
+Simple CLI tool to process the [partof_inclusion_relation_list.txt](assignments/src/main/resources/asgmt01_res/partof_inclusion_relation_list.txt) file.
+Goal was to print the full path of each relation to the console.
 
 ### assignment02: AnatomyDataExplorer
-run: `cd assignemnts && mvn clean javafx:anatomyDaraExplorer`
 ![AnatomyDataExplorer.png](img/AnatomyDataExplorer.png)
+This tool lists all body parts in a treeView and shows the corresponding file names on the right side
+of a splitPane.
 
 ### assignemnt03: WordExplorer
-- run `mvn clean javafx:run@wordExplorer`
-- for the written answers (scene-graph diagram & answer to task3.2) see the 
-  `src/main/java/assignemnt03/README_asgmt03.md`
 ![WordExplorer.png](img/WordExplorer.png)
+Here we build a wordCloud based on the selected parts.
 
 ### assignment04: TreeDrawer
-run `mvn clean javafx:run@treeDrawer`
 ![TreeDrawer.png](img/TreeDrawer.png)
+With this UI we visualized the relations in a tree.
 
 ### assignment05: ObjectViewer
-- run `mvn clean javafx:run@objectViewer`
-- Written answers at: `src/main/java/assignemnt05/README_asgmt05.md`
 ![ObjectViewer.png](img/ObjectViewer.png)
+Assignment05 was the first steps towards 3D modeling and presentation of .obj files in a three-dimensional space.
 
 ### assignment06: ObjectViewer6
-- run `mvn clean javafx:run@objectViewer6`
-- Written answers at: `src/main/java/assignemnt06/README_asgmt06.md`
 ![ObjectViewer6.png](img/ObjectViewer6.png)
+The 3D model viewer was expanded to allow mouse controls, and the option to load multiple .obj files into one ThreeDPane.
