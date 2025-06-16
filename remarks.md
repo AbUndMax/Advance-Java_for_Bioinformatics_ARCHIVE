@@ -396,3 +396,67 @@ Keeping the class in the correct package helps maintain **clean architecture and
 
 **✅ Total: 10 / 10**
 
+
+
+
+---
+
+## **Assignment 06**
+
+**Note:**
+The **"Add Axis" functionality** has an issue — the axis is not properly centered. I tried to debug it, but it seems the fix may require additional coding. If I get more time, I’ll look into it further. Alternatively, we can discuss it during the tutorial session.
+
+Again, the class `ObjParser` should be placed in the **`model`** package, not in the `window` package.
+It is a **data parsing and logic class**, and therefore belongs in the **model layer**, not the UI/view layer.
+
+Keeping the class in the correct package helps maintain **clean architecture and separation of concerns** (Model–View–Presentor principle).
+
+---
+
+### **Task 1**
+
+**Implementation:**
+Everything has been implemented as required.
+
+**Points:** 1/1
+
+---
+
+### **Task 2**
+
+**Functionality:**
+Works as expected.
+
+**Points:** 2/2
+
+---
+
+### **Task 3**
+
+**Functionality:**
+Works fine.
+
+**Points:** 2/2
+
+---
+
+### **Task 4**
+
+**Functionality:**
+Also works fine.
+
+**Points:** 2/2
+
+---
+
+### **Task 5**
+
+**Functionality:**
+Works smoothly. Good job overall. 
+**Points:** 3/3
+
+---
+
+### **Total: 10/10**
+
+Great work! The explanation is clear and well written.
