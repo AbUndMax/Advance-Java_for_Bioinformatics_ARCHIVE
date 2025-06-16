@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane fx:id="selection_SplitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.SelectionController">
+<SplitPane fx:id="selectionSplitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" orientation="VERTICAL" prefHeight="400.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.SelectionController">
   <items>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
          <children>
@@ -33,24 +33,16 @@
                <bottom>
                   <HBox alignment="CENTER" maxHeight="12.0" minHeight="12.0" prefHeight="12.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane maxHeight="12.0" minHeight="12.0" prefHeight="12.0">
-                           <children>
-                              <Button fx:id="expand_is_a" maxHeight="12.0" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="1000.0" text="▲▲▲" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font size="7.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="12.0" minHeight="12.0" prefHeight="12.0">
-                           <children>
-                              <Button fx:id="center_divider_1" maxHeight="12.0" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="1000.0" text="●" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font size="7.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </AnchorPane>
+                        <Button fx:id="expandIsAView" maxHeight="12.0" maxWidth="Infinity" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="0.0" text="▲▲▲" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="7.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="centerDivider1" maxHeight="12.0" maxWidth="Infinity" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="0.0" text="●" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="7.0" />
+                           </font>
+                        </Button>
                      </children>
                   </HBox>
                </bottom>
@@ -77,24 +69,16 @@
                <top>
                   <HBox alignment="CENTER" maxHeight="12.0" minHeight="12.0" prefHeight="12.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane maxHeight="12.0" minHeight="12.0" prefHeight="12.0">
-                           <children>
-                              <Button fx:id="center_divider_2" maxHeight="12.0" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="1000.0" text="●" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font size="7.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane maxHeight="12.0" minHeight="12.0" prefHeight="12.0">
-                           <children>
-                              <Button fx:id="expand_part_of" maxHeight="12.0" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="1000.0" text="▼▼▼" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <font>
-                                    <Font size="7.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </AnchorPane>
+                        <Button fx:id="centerDivider2" maxHeight="12.0" maxWidth="Infinity" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="0.0" text="●" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="7.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="expandPartOfView" maxHeight="12.0" maxWidth="Infinity" minHeight="12.0" mnemonicParsing="false" prefHeight="12.0" prefWidth="0.0" text="▼▼▼" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="7.0" />
+                           </font>
+                        </Button>
                      </children>
                   </HBox>
                </top>

@@ -6,26 +6,26 @@ import javafx.scene.control.SplitPane;
 
 public class SelectionController {
     @FXML
-    private Button center_divider_1;
+    private Button centerDivider1;
 
     @FXML
-    private Button center_divider_2;
+    private Button centerDivider2;
 
     @FXML
-    private Button expand_is_a;
+    private Button expandIsAView;
 
     @FXML
-    private Button expand_part_of;
+    private Button expandPartOfView;
 
     @FXML
-    private SplitPane selection_SplitPane;
+    private SplitPane selectionSplitPane;
 
     @FXML
     public void initialize() {
-        center_divider_1.setOnAction(e -> selection_SplitPane.setDividerPositions(0.5));
-        center_divider_2.setOnAction(e -> selection_SplitPane.setDividerPositions(0.5));
+        centerDivider1.setOnAction(e -> selectionSplitPane.setDividerPositions(0.5));
+        centerDivider2.setOnAction(e -> selectionSplitPane.setDividerPositions(0.5));
 
-        expand_is_a.setOnAction(e -> selection_SplitPane.setDividerPositions(0));
-        expand_part_of.setOnAction(e -> selection_SplitPane.setDividerPositions(1));
+        expandIsAView.setOnAction(e -> selectionSplitPane.setDividerPositions(0));
+        expandPartOfView.setOnAction(e -> selectionSplitPane.setDividerPositions(1));
     }
 }
