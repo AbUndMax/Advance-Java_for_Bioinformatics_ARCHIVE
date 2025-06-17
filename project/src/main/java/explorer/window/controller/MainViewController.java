@@ -1,6 +1,7 @@
 package explorer.window.controller;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 
@@ -111,8 +112,13 @@ public class MainViewController {
     @FXML
     public void initialize() {
         fixDividerOnResize(mainSplitPane);
+        setupAboutMessage();
     }
 
+    /**
+     * Fixes a divider of a splitPane to a position when resizing the window.
+     * @param splitPane
+     */
     private static void fixDividerOnResize(SplitPane splitPane) {
         splitPane.sceneProperty().addListener((obsScene, oldScene, newScene) -> {
             if (newScene != null) {
@@ -123,6 +129,22 @@ public class MainViewController {
                     splitPane.setDividerPositions(newRelativePos);
                 });
             }
+        });
+    }
+
+    /**
+     * sets up the "ABOUT" message of the Help-Menu
+     */
+    private void setupAboutMessage() {
+        menuButtonAbout.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("About");
+            alert.setHeaderText("Anatomy Explorer    ᕙ(  •̀ ᗜ •́  )ᕗ");
+            alert.setContentText("Implemented by Niklas Gerbes! \n" +
+                                         "This app is the final project of the summer term course \n" +
+                                         "\"Advanced Java for Bioinformatics\" \n" +
+                                         "2025 U. Tübingen by Prof. D. Huson");
+            alert.showAndWait();
         });
     }
 }
