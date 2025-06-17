@@ -49,30 +49,30 @@ public class TransformUtils {
         group.getTransforms().setAll(new Translate(-X, -Y, -Z));
     }
 
-    private static double xPrev;
-    private static double yPrev;
     /**
      * setups the mouse rotation functionality on:
      * @param pane in which the mouse rotation should be active
      * @param figure on which the rotation should be applied
      *
-     * SOURCE: copy from assignment06 MouseRotate3D class
+     * SOURCE: modified based on assignment06 MouseRotate3D class
      */
     public static void setupMouseRotation(Pane pane, Group figure) {
+        final double[] xPrev = new double[1];
+        final double[] yPrev = new double[1];
         pane.setOnMousePressed(e -> {
-            xPrev = e.getSceneX();
-            yPrev = e.getSceneY();
+            xPrev[0] = e.getSceneX();
+            yPrev[0] = e.getSceneY();
         });
         pane.setOnMouseDragged(e -> {
-            var dx = e.getSceneX() - xPrev;
-            var dy = e.getSceneY() - yPrev;
+            var dx = e.getSceneX() - xPrev[0];
+            var dy = e.getSceneY() - yPrev[0];
             var axis = new Point3D(dy, -dx, 0).normalize();
             var angle = Math.sqrt(dx * dx + dy * dy) * 0.5; // based on the distance of the mouse movement
 
-            TransformUtils.applyGlobalRotation(figure, axis, angle);
+            applyGlobalRotation(figure, axis, angle);
 
-            xPrev = e.getSceneX();
-            yPrev = e.getSceneY();
+            xPrev[0] = e.getSceneX();
+            yPrev[0] = e.getSceneY();
         });
     }
 }
