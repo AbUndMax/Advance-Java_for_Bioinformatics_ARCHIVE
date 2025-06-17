@@ -59,6 +59,18 @@ public class MainViewController {
     private MenuItem menuButtonRotateUp;
 
     @FXML
+    private MenuItem menuButtonTranslateDown;
+
+    @FXML
+    private MenuItem menuButtonTranslateLeft;
+
+    @FXML
+    private MenuItem menuButtonTranslateRight;
+
+    @FXML
+    private MenuItem menuButtonTranslateUp;
+
+    @FXML
     private MenuItem menuButtonShowSelectionList;
 
     @FXML
@@ -129,6 +141,22 @@ public class MainViewController {
 
     public MenuItem getMenuButtonZoomOut() {
         return menuButtonZoomOut;
+    }
+
+    public MenuItem getMenuButtonTranslateDown() {
+        return menuButtonTranslateDown;
+    }
+
+    public MenuItem getMenuButtonTranslateLeft() {
+        return menuButtonTranslateLeft;
+    }
+
+    public MenuItem getMenuButtonTranslateRight() {
+        return menuButtonTranslateRight;
+    }
+
+    public MenuItem getMenuButtonTranslateUp() {
+        return menuButtonTranslateUp;
     }
 
     /**

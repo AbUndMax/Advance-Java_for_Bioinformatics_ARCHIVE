@@ -1,8 +1,13 @@
 package explorer.window.vistools;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
+import javafx.scene.control.Slider;
 import javafx.scene.input.ScrollEvent;
 
 /**
@@ -15,8 +20,14 @@ import javafx.scene.input.ScrollEvent;
 public class MyCamera extends PerspectiveCamera {
 
     // reset Position the camera returns to after pressing the reset button
-    private double resetPositionInZ = -200; //TODO
+    private double resetPositionInZ = -200;
     private double zoomFactor = 1;
+    private final int maxZoomIn = 0;
+    private final DoubleProperty maxZoomOut = new SimpleDoubleProperty(-400);
+
+    public DoubleProperty getMaxZoomOut() {
+        return maxZoomOut;
+    }
 
     /**
      * Constructs an instance of the MyCamera class, extending PerspectiveCamera
@@ -34,6 +45,18 @@ public class MyCamera extends PerspectiveCamera {
         this.setFarClip(10000);
         this.setNearClip(0.1);
         this.setTranslateZ(resetPositionInZ); // back away from the origin ...
+    }
+
+    /**
+     * Focuses a specific javaFX Group by applying {@link #focusFullFigure} and adding a listener
+     * that applies the same function each time the figure changes
+     * @param figure to focus on
+     */
+    public void setFocus(Group figure) {
+        focusFullFigure(figure);
+        figure.getChildren().addListener((ListChangeListener<Node>) change -> {
+            this.focusFullFigure(figure);
+        });
     }
 
     /**
@@ -80,19 +103,25 @@ public class MyCamera extends PerspectiveCamera {
 
         this.resetPositionInZ = -requiredDistance;
         this.zoomFactor = Math.max(1, longestEdge * 0.03);
+        this.maxZoomOut.set(-longestEdge * 50);
         this.resetView();
     }
 
     public void zoomIn() {
-        this.setTranslateZ(this.getTranslateZ() + zoomFactor * 10);
+        double newPosition = this.getTranslateZ() + zoomFactor * 10;
+        System.out.println(newPosition);
+        this.setTranslateZ(Math.min(newPosition, maxZoomIn));
     }
 
     public void zoomOut() {
-        this.setTranslateZ(this.getTranslateZ() - zoomFactor * 10);
+        double newPosition = this.getTranslateZ() - zoomFactor * 10;
+        this.setTranslateZ(Math.max(newPosition, maxZoomOut.getValue()));
     }
 
     public void zoom(double zoom) {
-        this.setTranslateZ(this.getTranslateZ() + zoom * zoomFactor);
+        double newPosition = this.getTranslateZ() + zoom * zoomFactor;
+        System.out.println(maxZoomOut);
+        this.setTranslateZ(Math.min(Math.max(newPosition, maxZoomOut.getValue()), maxZoomIn));
     }
 
     /**
@@ -107,9 +136,13 @@ public class MyCamera extends PerspectiveCamera {
         double deltaY = event.getDeltaY();
         double deltaX = event.getDeltaX();
         if (event.isShiftDown()) { // if shift is pressed, instead if zooming, we pan the camera
-            this.setTranslateY(this.getTranslateY() + deltaY);
-            this.setTranslateX(this.getTranslateX() + deltaX);
+            this.pan(deltaX, deltaY);
         }
         else this.zoom(deltaY);
+    }
+
+    public void pan(double x, double y) {
+        this.setTranslateX(this.getTranslateX() + x);
+        this.setTranslateY(this.getTranslateY() + y);
     }
 }

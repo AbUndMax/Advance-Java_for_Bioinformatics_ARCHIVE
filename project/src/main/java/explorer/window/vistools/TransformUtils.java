@@ -25,7 +25,7 @@ public class TransformUtils {
      *
      * SOURCE: copy from assignment06 WindowPresenter class
      */
-    protected static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
+    public static void applyGlobalRotation(Group contentGroup, Point3D axis, double angle) {
         var currentTransform = contentGroup.getTransforms().getFirst();
         var rotate = new Rotate(angle, axis);
         currentTransform = rotate.createConcatenation(currentTransform);

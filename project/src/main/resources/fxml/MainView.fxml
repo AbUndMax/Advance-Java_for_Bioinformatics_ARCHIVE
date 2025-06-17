@@ -43,7 +43,10 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="L" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator></MenuItem>
-                  <SeparatorMenuItem mnemonicParsing="false" />
+              </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Transformations">
+               <items>
                   <MenuItem fx:id="menuButtonRotateLeft" mnemonicParsing="false" text="Rotate Left">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="LEFT" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
@@ -60,6 +63,28 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="DOWN" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator></MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="menuButtonTranslateLeft" mnemonicParsing="false" text="Translate Left">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="LEFT" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="menuButtonTranslateRight" mnemonicParsing="false" text="Translate Right">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="RIGHT" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="menuButtonTranslateUp" mnemonicParsing="false" text="Translate Up">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="UP" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="menuButtonTranslateDown" mnemonicParsing="false" text="Translate Down">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="DOWN" control="UP" meta="UP" shift="DOWN" shortcut="DOWN" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuButtonResetPosition" mnemonicParsing="false" text="Reset Position">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="R" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
@@ -72,7 +97,7 @@
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="MINUS" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
                      </accelerator></MenuItem>
-              </items>
+               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
@@ -87,11 +112,11 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="350.0">
                <children>
-                  <fx:include source="SelectionView.fxml" fx:id="selection" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <fx:include fx:id="selection" source="SelectionView.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="450.0">
                <children>
-                  <fx:include source="VisualizationView.fxml" fx:id="visualization" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <fx:include fx:id="visualization" source="VisualizationView.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
         </items>
       </SplitPane>

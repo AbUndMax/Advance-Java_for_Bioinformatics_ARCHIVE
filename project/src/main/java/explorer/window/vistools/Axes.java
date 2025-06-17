@@ -65,12 +65,12 @@ public class Axes extends Group {
     }
 
     /**
-     * Makes Cylinder of length l and radius equal to 5% of length.
+     * Makes Cylinder of length l and radius equal to 7.5% of length.
      * Applies material to cylinder.
      * Sets coordinates (0,0,0)
      */
     private Cylinder makeCylinderVec(double length, PhongMaterial material) {
-        Cylinder cylinder = new Cylinder(length * 0.05, length);
+        Cylinder cylinder = new Cylinder(length * 0.075, length);
         cylinder.setMaterial(material);
         cylinder.setTranslateX(0);
         cylinder.setTranslateY(0);
