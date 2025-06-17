@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="700.0" minWidth="1000.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.MainController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="820.0" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.MainViewController">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -31,15 +31,15 @@
       </MenuBar>
    </top>
    <center>
-      <SplitPane dividerPositions="0.35" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="mainSplitPane" dividerPositions="0.35" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="350.0">
                <children>
-                  <fx:include source="Selection.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <fx:include source="SelectionView.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="450.0">
                <children>
-                  <fx:include source="Visualization.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <fx:include source="VisualizationView.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
         </items>
       </SplitPane>

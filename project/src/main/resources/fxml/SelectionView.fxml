@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane minWidth="350.0" prefHeight="500.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.SelectionController">
+<BorderPane minHeight="250.0" minWidth="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.SelectionViewController">
    <top>
       <ToolBar BorderPane.alignment="CENTER">
         <items>
@@ -46,7 +46,7 @@
    <center>
       <SplitPane fx:id="selectionListSplitPane" dividerPositions="1.0" BorderPane.alignment="CENTER">
          <items>
-            <SplitPane fx:id="selectionSplitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="175.0" orientation="VERTICAL" prefWidth="200.0">
+            <SplitPane fx:id="treeViewSplitPane" dividerPositions="0.5" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="175.0" orientation="VERTICAL" prefWidth="200.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>
@@ -122,9 +122,9 @@
                   </AnchorPane>
               </items>
             </SplitPane>
-            <BorderPane fx:id="selectionListPane" minWidth="150.0" prefWidth="150.0" SplitPane.resizableWithParent="false">
+            <BorderPane fx:id="selectionListPane" minHeight="200.0" minWidth="150.0" prefWidth="150.0" SplitPane.resizableWithParent="false">
                <center>
-                  <ListView fx:id="selectionListView" minWidth="175.0" />
+                  <ListView fx:id="selectionListView" minHeight="150.0" minWidth="175.0" />
                </center>
                <top>
                   <Label text="Selected Parts" BorderPane.alignment="CENTER">

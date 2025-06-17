@@ -1,15 +1,16 @@
 package explorer.window.controller;
 
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 
-public class SelectionController {
+public class SelectionViewController {
     @FXML
     private Button centerDivider1;
 
@@ -23,7 +24,7 @@ public class SelectionController {
     private Button expandPartOfView;
 
     @FXML
-    private SplitPane selectionSplitPane;
+    private SplitPane treeViewSplitPane;
 
     @FXML
     private SplitPane selectionListSplitPane;
@@ -34,6 +35,10 @@ public class SelectionController {
     @FXML
     private BorderPane selectionListPane;
 
+    /**
+     * All controls set in the initializer are just for basic GUI behavior!
+     * Nothing related to ANY model or window functionality!
+     */
     @FXML
     public void initialize() {
         setDividerControls();
@@ -42,13 +47,29 @@ public class SelectionController {
 
     /**
      * sets the corresponding actions for the divider buttons between the two treeViews
+     * and ensures that the divider position
+     * stays fully expanded to the set treeView on resize if it was before the resize
      */
     private void setDividerControls() {
-        centerDivider1.setOnAction(e -> selectionSplitPane.setDividerPositions(0.5));
-        centerDivider2.setOnAction(e -> selectionSplitPane.setDividerPositions(0.5));
+        // those button control the position of the divider between the two treeViews
+        centerDivider1.setOnAction(e -> treeViewSplitPane.setDividerPositions(0.5));
+        centerDivider2.setOnAction(e -> treeViewSplitPane.setDividerPositions(0.5));
 
-        expandIsAView.setOnAction(e -> selectionSplitPane.setDividerPositions(0));
-        expandPartOfView.setOnAction(e -> selectionSplitPane.setDividerPositions(1));
+        expandIsAView.setOnAction(e -> treeViewSplitPane.setDividerPositions(0));
+        expandPartOfView.setOnAction(e -> treeViewSplitPane.setDividerPositions(1));
+
+        // treeView position is fixed to top or bottom if any treeView was fully expanded before!
+        treeViewSplitPane.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.heightProperty().addListener((obsHeight, oldH, newH) -> {
+                    double dividerPos = treeViewSplitPane.getDividerPositions()[0];
+
+                    // if the splitView is fully expanded to any of the treeViews, the position is kept on resize!
+                    if (dividerPos < 0.05) treeViewSplitPane.setDividerPositions(0);
+                    else if (dividerPos > 0.95) treeViewSplitPane.setDividerPositions(1);
+                });
+            }
+        });
     }
 
     /**

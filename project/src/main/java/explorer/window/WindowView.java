@@ -9,18 +9,18 @@ import java.net.URL;
 
 public class WindowView {
     private final Parent root;
-    private final MainController mainController;
-    private final SelectionController selectionController;
-    private final VisualizationController visualizationController;
+    private final MainViewController mainViewController;
+    private final SelectionViewController selectionViewController;
+    private final VisualizationViewController visualizationViewController;
 
     public WindowView() throws IOException {
-        URL mainFXML = getClass().getResource("/fxml/Main.fxml");
+        URL mainFXML = getClass().getResource("/fxml/MainView.fxml");
         FXMLLoader loader = new FXMLLoader(mainFXML);
         root = loader.load();
-        mainController = loader.getController();
+        mainViewController = loader.getController();
 
-        selectionController = loadController("/fxml/Selection.fxml");
-        visualizationController = loadController("/fxml/Visualization.fxml");
+        selectionViewController = loadController("/fxml/SelectionView.fxml");
+        visualizationViewController = loadController("/fxml/VisualizationView.fxml");
     }
 
     private <T> T loadController(String resourcePath) throws IOException {
@@ -31,7 +31,7 @@ public class WindowView {
     }
 
     public Parent getRoot() { return root; }
-    public MainController getMainController() {return mainController; }
-    public SelectionController getSelectionController() {return selectionController; }
-    public VisualizationController getVisualizationController() {return visualizationController; }
+    public MainViewController getMainController() {return mainViewController; }
+    public SelectionViewController getSelectionController() {return selectionViewController; }
+    public VisualizationViewController getVisualizationController() {return visualizationViewController; }
 }
