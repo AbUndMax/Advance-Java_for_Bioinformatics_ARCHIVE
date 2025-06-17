@@ -14,9 +14,9 @@ public class AnatomyExplorer extends Application {
         var view = new WindowView();
 
         // using presenter classes for each view respectively for better clarity and smaller individual presenter classes
-        new MainViewPresenter(view.getMainController());
-        new SelectionViewPresenter(view.getSelectionController());
-        new VisualizationViewPresenter(view.getVisualizationController());
+        new MainViewPresenter(view.getMainViewController());
+        new SelectionViewPresenter(view.getSelectionViewController());
+        new VisualizationViewPresenter(view.getVisualizationViewController());
 
         primaryStage.setTitle("Anatomy Explorer");
         primaryStage.setScene(new javafx.scene.Scene(view.getRoot(), 1000, 700));

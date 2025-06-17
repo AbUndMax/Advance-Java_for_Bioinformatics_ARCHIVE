@@ -155,5 +155,8 @@ public class VisualizationViewController {
     @FXML
     public void initialize() {
         searchChoice.setValue("3D viewer");
+
+        // TODO: scene marker removing
+        // visualizationPane.setStyle("-fx-border-color: blue; -fx-background-color: yellow;");
     }
 }

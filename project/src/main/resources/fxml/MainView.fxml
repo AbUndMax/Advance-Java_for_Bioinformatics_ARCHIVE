@@ -87,11 +87,11 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="350.0">
                <children>
-                  <fx:include source="SelectionView.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <fx:include source="SelectionView.fxml" fx:id="selection" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="450.0">
                <children>
-                  <fx:include source="VisualizationView.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <fx:include source="VisualizationView.fxml" fx:id="visualization" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children></AnchorPane>
         </items>
       </SplitPane>

@@ -15,7 +15,7 @@ import javafx.scene.input.ScrollEvent;
 public class MyCamera extends PerspectiveCamera {
 
     // reset Position the camera returns to after pressing the reset button
-    private double resetPositionInZ = -400;
+    private double resetPositionInZ = -200; //TODO
     private double zoomFactor = 1;
 
     /**
@@ -103,7 +103,7 @@ public class MyCamera extends PerspectiveCamera {
      * @param event The scroll event containing details such as scroll direction,
      *              scroll distance, and modifier keys that are pressed.
      */
-    private void zoomAndPanScrolling(ScrollEvent event) {
+    public void zoomAndPanScrolling(ScrollEvent event) {
         double deltaY = event.getDeltaY();
         double deltaX = event.getDeltaX();
         if (event.isShiftDown()) { // if shift is pressed, instead if zooming, we pan the camera

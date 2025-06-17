@@ -18,20 +18,23 @@ public class WindowView {
         FXMLLoader loader = new FXMLLoader(mainFXML);
         root = loader.load();
         mainViewController = loader.getController();
-
-        selectionViewController = loadController("/fxml/SelectionView.fxml");
-        visualizationViewController = loadController("/fxml/VisualizationView.fxml");
+        selectionViewController = mainViewController.getSelectionViewController();
+        visualizationViewController = mainViewController.getVisualizationViewController();
     }
 
-    private <T> T loadController(String resourcePath) throws IOException {
-        URL resource = getClass().getResource(resourcePath);
-        FXMLLoader loader = new FXMLLoader(resource);
-        loader.load();
-        return loader.getController();
+    public Parent getRoot() {
+        return root;
     }
 
-    public Parent getRoot() { return root; }
-    public MainViewController getMainController() {return mainViewController; }
-    public SelectionViewController getSelectionController() {return selectionViewController; }
-    public VisualizationViewController getVisualizationController() {return visualizationViewController; }
+    public MainViewController getMainViewController() {
+        return mainViewController;
+    }
+
+    public SelectionViewController getSelectionViewController() {
+        return selectionViewController;
+    }
+
+    public VisualizationViewController getVisualizationViewController() {
+        return visualizationViewController;
+    }
 }

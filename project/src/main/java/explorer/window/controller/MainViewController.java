@@ -1,11 +1,31 @@
 package explorer.window.controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.layout.BorderPane;
 
 public class MainViewController {
+
+    // Root-Node der SelectionView.fxml
+    @FXML private BorderPane selection;
+    // Controller der SelectionView.fxml
+    @FXML private SelectionViewController selectionController;
+
+    // Root-Node der VisualizationView.fxml
+    @FXML private BorderPane visualization;
+    // Controller der VisualizationView.fxml
+    @FXML private VisualizationViewController visualizationController;
+
+    // Getter, um sie anderen Klassen bereitzustellen
+    public SelectionViewController getSelectionViewController() {
+        return selectionController;
+    }
+    public VisualizationViewController getVisualizationViewController() {
+        return visualizationController;
+    }
 
     @FXML
     private SplitPane mainSplitPane;
@@ -113,6 +133,7 @@ public class MainViewController {
     public void initialize() {
         fixDividerOnResize(mainSplitPane);
         setupAboutMessage();
+        menuButtonClose.setOnAction(e -> Platform.exit());
     }
 
     /**
