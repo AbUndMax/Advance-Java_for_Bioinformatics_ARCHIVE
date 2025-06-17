@@ -9,23 +9,21 @@ import javafx.scene.layout.BorderPane;
 
 public class MainViewController {
 
-    // Root-Node der SelectionView.fxml
-    @FXML private BorderPane selection;
-    // Controller der SelectionView.fxml
-    @FXML private SelectionViewController selectionController;
+    // Root-Node for SelectionView.fxml
+    @FXML
+    private BorderPane selection;
 
-    // Root-Node der VisualizationView.fxml
-    @FXML private BorderPane visualization;
-    // Controller der VisualizationView.fxml
-    @FXML private VisualizationViewController visualizationController;
+    // Controller for SelectionView.fxml
+    @FXML
+    private SelectionViewController selectionController;
 
-    // Getter, um sie anderen Klassen bereitzustellen
-    public SelectionViewController getSelectionViewController() {
-        return selectionController;
-    }
-    public VisualizationViewController getVisualizationViewController() {
-        return visualizationController;
-    }
+    // Root-Node for VisualizationView.fxml
+    @FXML
+    private BorderPane visualization;
+
+    // Controller for VisualizationView.fxml
+    @FXML
+    private VisualizationViewController visualizationController;
 
     @FXML
     private SplitPane mainSplitPane;
@@ -68,6 +66,14 @@ public class MainViewController {
 
     @FXML
     private MenuItem menuButtonZoomOut;
+
+    // Controller getters
+    public SelectionViewController getSelectionViewController() {
+        return selectionController;
+    }
+    public VisualizationViewController getVisualizationViewController() {
+        return visualizationController;
+    }
 
     public SplitPane getMainSplitPane() {
         return mainSplitPane;
