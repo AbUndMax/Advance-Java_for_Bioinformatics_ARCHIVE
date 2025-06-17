@@ -1,16 +1,27 @@
 package explorer.window.controller;
 
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 
 public class SelectionViewController {
+    @FXML
+    private Button buttonCollapseAtTreeNode;
+
+    @FXML
+    private Button buttonDeselect;
+
+    @FXML
+    private Button buttonExpandAtTreeNode;
+
+    @FXML
+    private Button buttonInvertSelection;
+
+    @FXML
+    private Button buttonSelectAtTreeNode;
+
     @FXML
     private Button centerDivider1;
 
@@ -24,7 +35,13 @@ public class SelectionViewController {
     private Button expandPartOfView;
 
     @FXML
-    private SplitPane treeViewSplitPane;
+    private RadioButton radioHideSelection;
+
+    @FXML
+    private RadioButton radioShowSelection;
+
+    @FXML
+    private BorderPane selectionListPane;
 
     @FXML
     private SplitPane selectionListSplitPane;
@@ -33,7 +50,95 @@ public class SelectionViewController {
     private ToggleButton selectionListToggle;
 
     @FXML
-    private BorderPane selectionListPane;
+    private ListView<?> selectionListView;
+
+    @FXML
+    private ToggleGroup selectionVisibility;
+
+    @FXML
+    private TreeView<?> treeViewIsA;
+
+    @FXML
+    private TreeView<?> treeViewPartOf;
+
+    @FXML
+    private SplitPane treeViewSplitPane;
+
+    public Button getButtonCollapseAtTreeNode() {
+        return buttonCollapseAtTreeNode;
+    }
+
+    public Button getButtonDeselect() {
+        return buttonDeselect;
+    }
+
+    public Button getButtonExpandAtTreeNode() {
+        return buttonExpandAtTreeNode;
+    }
+
+    public Button getButtonInvertSelection() {
+        return buttonInvertSelection;
+    }
+
+    public Button getButtonSelectAtTreeNode() {
+        return buttonSelectAtTreeNode;
+    }
+
+    public Button getCenterDivider1() {
+        return centerDivider1;
+    }
+
+    public Button getCenterDivider2() {
+        return centerDivider2;
+    }
+
+    public Button getExpandIsAView() {
+        return expandIsAView;
+    }
+
+    public Button getExpandPartOfView() {
+        return expandPartOfView;
+    }
+
+    public RadioButton getRadioHideSelection() {
+        return radioHideSelection;
+    }
+
+    public RadioButton getRadioShowSelection() {
+        return radioShowSelection;
+    }
+
+    public BorderPane getSelectionListPane() {
+        return selectionListPane;
+    }
+
+    public SplitPane getSelectionListSplitPane() {
+        return selectionListSplitPane;
+    }
+
+    public ToggleButton getSelectionListToggle() {
+        return selectionListToggle;
+    }
+
+    public ListView<?> getSelectionListView() {
+        return selectionListView;
+    }
+
+    public ToggleGroup getSelectionVisibility() {
+        return selectionVisibility;
+    }
+
+    public TreeView<?> getTreeViewIsA() {
+        return treeViewIsA;
+    }
+
+    public TreeView<?> getTreeViewPartOf() {
+        return treeViewPartOf;
+    }
+
+    public SplitPane getTreeViewSplitPane() {
+        return treeViewSplitPane;
+    }
 
     /**
      * All controls set in the initializer are just for basic GUI behavior!

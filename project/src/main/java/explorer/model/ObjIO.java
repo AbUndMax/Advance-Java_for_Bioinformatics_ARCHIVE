@@ -2,14 +2,13 @@ package explorer.model;
 
 import explorer.window.vistools.MyCamera;
 import explorer.window.vistools.ObjParser;
-import javafx.geometry.Bounds;
+import explorer.window.vistools.TransformUtils;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.MeshView;
 import javafx.scene.shape.TriangleMesh;
-import javafx.scene.transform.Translate;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -17,6 +16,9 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Class completely copied from assignment06 with smaller refactors
+ */
 public class ObjIO {
 
     public static MeshView createMeshWithIMG(TriangleMesh mesh, File image) {
@@ -66,23 +68,8 @@ public class ObjIO {
         // group.getChildren().clear();
         group.getChildren().addAll(meshViews);
 
-        centerGroupToItself(group);
+        TransformUtils.centerGroupToItself(group);
         camera.focusFullFigure(group);
-    }
-
-    /**
-     * Centers the specified 3D group to its own local bounding box.
-     * This method calculates the center point of the group's local bounds
-     * and applies a translation to shift the group so that its center aligns with the origin.
-     *
-     * @param group The 3D group to be centered relative to its local coordinate system.
-     */
-    public static void centerGroupToItself(Group group) {
-        Bounds bounds = group.getBoundsInLocal();
-        double X = (bounds.getMinX() + bounds.getMaxX()) / 2;
-        double Y = (bounds.getMinY() + bounds.getMaxY()) / 2;
-        double Z = (bounds.getMinZ() + bounds.getMaxZ()) / 2;
-        group.getTransforms().setAll(new Translate(-X, -Y, -Z));
     }
 }
 

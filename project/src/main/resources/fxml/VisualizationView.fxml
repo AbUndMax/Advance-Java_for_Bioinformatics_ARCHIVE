@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.VisualizationViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.VisualizationViewController">
    <center>
-      <Pane BorderPane.alignment="CENTER">
+      <Pane fx:id="visualizationPane" BorderPane.alignment="CENTER">
          <children>
             <BorderPane layoutX="14.0" layoutY="14.0">
                <center>
@@ -25,47 +37,47 @@
                       <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↖">
+                        <Button fx:id="buttonCntrlLeftUp" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↖">
                            <font>
                               <Font size="11.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="↑" GridPane.columnIndex="1">
+                        <Button fx:id="buttonCntrlUp" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="↑" GridPane.columnIndex="1">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↗" GridPane.columnIndex="2">
+                        <Button fx:id="buttonCntrlRightUp" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↗" GridPane.columnIndex="2">
                            <font>
                               <Font size="11.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="←" GridPane.rowIndex="1">
+                        <Button fx:id="buttonCntrlLeft" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="←" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="O" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="buttonCntrlReset" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="O" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="→" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Button fx:id="buttonCntrlRight" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="→" GridPane.columnIndex="2" GridPane.rowIndex="1">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↙" GridPane.rowIndex="2">
+                        <Button fx:id="buttonCntrlLeftDown" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↙" GridPane.rowIndex="2">
                            <font>
                               <Font size="11.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="↓" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Button fx:id="buttonCntrlDown" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" text="↓" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <font>
                               <Font name="System Bold" size="13.0" />
                            </font>
                         </Button>
-                        <Button maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↘" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Button fx:id="buttonCntrlRightDown" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" text="↘" GridPane.columnIndex="2" GridPane.rowIndex="2">
                            <font>
                               <Font size="11.0" />
                            </font>
@@ -79,7 +91,7 @@
                <bottom>
                   <VBox spacing="4.0">
                      <children>
-                        <RadioButton mnemonicParsing="false" selected="true" text="Rotation">
+                        <RadioButton fx:id="radioRotation" mnemonicParsing="false" selected="true" text="Rotation">
                            <toggleGroup>
                               <ToggleGroup fx:id="threeDControl" />
                            </toggleGroup>
@@ -90,7 +102,7 @@
                               <Font size="12.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton mnemonicParsing="false" text="Translation" toggleGroup="$threeDControl">
+                        <RadioButton fx:id="radioTranslation" mnemonicParsing="false" text="Translation" toggleGroup="$threeDControl">
                            <VBox.margin>
                               <Insets left="10.0" />
                            </VBox.margin>
@@ -111,7 +123,7 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <TextField prefWidth="200.0" promptText="Search for anatomy parts" />
+            <TextField fx:id="textFieldSearchBar" prefWidth="200.0" promptText="Search for anatomy parts" />
             <ChoiceBox fx:id="searchChoice" prefWidth="100.0">
                <items>
                   <FXCollections fx:factory="observableArrayList">
@@ -121,9 +133,9 @@
                   </FXCollections>
                </items>
             </ChoiceBox>
-            <Button disable="true" mnemonicParsing="false" text="Next" />
-            <Button disable="true" mnemonicParsing="false" text="First" />
-            <Button disable="true" mnemonicParsing="false" text="All" />
+            <Button fx:id="buttonFindNext" disable="true" mnemonicParsing="false" text="Next" />
+            <Button fx:id="buttonFindFirst" disable="true" mnemonicParsing="false" text="First" />
+            <Button fx:id="buttonFindAll" disable="true" mnemonicParsing="false" text="All" />
             <Label fx:id="searchHitLabel" disable="true" text="0 / 0 hits" />
          </items>
       </ToolBar>

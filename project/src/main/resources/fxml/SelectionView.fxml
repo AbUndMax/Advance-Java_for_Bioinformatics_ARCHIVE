@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="250.0" minWidth="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.SelectionViewController">
+<BorderPane minHeight="250.0" minWidth="350.0" prefWidth="350.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="explorer.window.controller.SelectionViewController">
    <top>
       <ToolBar BorderPane.alignment="CENTER">
         <items>
-            <Button mnemonicParsing="false" text="Expand" />
-            <Button mnemonicParsing="false" text="Collapse" />
+            <Button fx:id="buttonExpandAtTreeNode" mnemonicParsing="false" text="Expand" />
+            <Button fx:id="buttonCollapseAtTreeNode" mnemonicParsing="false" text="Collapse" />
             <Region HBox.hgrow="ALWAYS" />
             <ToggleButton fx:id="selectionListToggle" mnemonicParsing="false" text="Selection List" />
         </items>
@@ -19,13 +32,13 @@
    <bottom>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-            <Button mnemonicParsing="false" text="Select" />
-            <Button mnemonicParsing="false" text="Invert Select" />
-            <Button mnemonicParsing="false" text="Deselect" />
+            <Button fx:id="buttonSelectAtTreeNode" mnemonicParsing="false" text="Select" />
+            <Button fx:id="buttonInvertSelection" mnemonicParsing="false" text="Invert Select" />
+            <Button fx:id="buttonDeselect" mnemonicParsing="false" text="Deselect" />
             <Separator orientation="VERTICAL" />
             <VBox spacing="2.0">
                <children>
-                  <RadioButton mnemonicParsing="false" selected="true" text="Show Selection">
+                  <RadioButton fx:id="radioShowSelection" mnemonicParsing="false" selected="true" text="Show Selection">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -33,7 +46,7 @@
                         <ToggleGroup fx:id="selectionVisibility" />
                      </toggleGroup>
                   </RadioButton>
-                  <RadioButton mnemonicParsing="false" text="Hide Selection" toggleGroup="$selectionVisibility">
+                  <RadioButton fx:id="radioHideSelection" mnemonicParsing="false" text="Hide Selection" toggleGroup="$selectionVisibility">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -54,7 +67,7 @@
                            <center>
                               <BorderPane>
                                  <center>
-                                    <TreeView BorderPane.alignment="CENTER" />
+                                    <TreeView fx:id="treeViewPartOf" BorderPane.alignment="CENTER" />
                                  </center>
                                  <top>
                                     <Label alignment="CENTER" text="part-of" textAlignment="CENTER" BorderPane.alignment="CENTER">
@@ -90,7 +103,7 @@
                            <center>
                               <BorderPane>
                                  <center>
-                                    <TreeView BorderPane.alignment="CENTER" />
+                                    <TreeView fx:id="treeViewIsA" BorderPane.alignment="CENTER" />
                                  </center>
                                  <top>
                                     <Label alignment="CENTER" text="is-a" textAlignment="CENTER" BorderPane.alignment="CENTER">
