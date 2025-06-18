@@ -7,7 +7,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.PerspectiveCamera;
-import javafx.scene.control.Slider;
 import javafx.scene.input.ScrollEvent;
 
 /**

@@ -3,7 +3,6 @@ package explorer.window;
 import explorer.window.controller.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-
 import java.io.IOException;
 import java.net.URL;
 

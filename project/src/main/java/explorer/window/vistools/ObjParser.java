@@ -3,7 +3,6 @@ package explorer.window.vistools;
 
 import javafx.scene.shape.TriangleMesh;
 import javafx.scene.shape.VertexFormat;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;

@@ -1,7 +1,6 @@
 package explorer;
 
 import explorer.window.WindowView;
-
 import explorer.window.presenter.MainViewPresenter;
 import explorer.window.presenter.SelectionViewPresenter;
 import explorer.window.presenter.VisualizationViewPresenter;

@@ -15,10 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
-
 import java.util.List;
-import java.util.Map;
 
 import static explorer.window.vistools.TransformUtils.applyGlobalRotation;
 
@@ -33,13 +30,13 @@ public class VisualizationViewPresenter {
     );
     private static final int rotationStep = 10;
     private static final int translationStep = 5;
-    private final Group contentGroup = new Group();
+    private final Group contentGroup;
     private final MyCamera camera = new MyCamera();
 
     public VisualizationViewPresenter(VisualizationViewController visualizationViewController) {
-        setupVisualisationPane(visualizationViewController);
-        setupTripodPane(visualizationViewController);
-        setupVisualizationViewButtons(visualizationViewController);
+        contentGroup = setupVisualisationPane(visualizationViewController);
+        setupTripodPane(visualizationViewController, contentGroup);
+        setupVisualizationViewButtons(visualizationViewController, contentGroup);
     }
 
     /**
@@ -50,8 +47,9 @@ public class VisualizationViewPresenter {
      * @param controller The WindowController instance containing the 3D drawing pane
      *                   and other UI components associated with the application.
      */
-    private void setupVisualisationPane(VisualizationViewController controller) {
+    private Group setupVisualisationPane(VisualizationViewController controller) {
         Pane visualizationPane = controller.getVisualizationPane();
+        Group contentGroup = new Group();
         Group root3d = new Group(contentGroup);
 
         var subScene = new SubScene(root3d, 600, 600, true, SceneAntialiasing.BALANCED);
@@ -88,9 +86,11 @@ public class VisualizationViewPresenter {
         // load the human body parts
         contentGroup.getChildren().add(new Axes(20)); // TODO load human body into the contentPane
         contentGroup.getTransforms().setAll(initialTransform);
+
+        return contentGroup;
     }
 
-    private void setupTripodPane(VisualizationViewController visualizationViewController) {
+    private void setupTripodPane(VisualizationViewController visualizationViewController, Group contentGroup) {
         Pane tripodPane = visualizationViewController.getTripodPane();
 
         Group tripodGroup = new Group();
@@ -123,7 +123,7 @@ public class VisualizationViewPresenter {
      * sets up all the buttons in the visualizationView
      * @param visualizationViewController
      */
-    private void setupVisualizationViewButtons(VisualizationViewController visualizationViewController) {
+    private void setupVisualizationViewButtons(VisualizationViewController visualizationViewController, Group contentGroup) {
         // Record-Type for keeping the actions better together
         // with a small pun ... DirAction... DIRAction ... DIRECTION ... got it? ☚(ﾟヮﾟ☚)
         record DirAction(Button btn, Point3D rotAxis, double rotAngle, Point3D trans) {}
@@ -193,12 +193,12 @@ public class VisualizationViewPresenter {
         slider.setMin(0); // max zoom in is always 0
         slider.maxProperty().bind(camera.getMaxZoomOut().multiply(-1)); // max zoom out is dynamic based on figure
 
-        // Kamera → Slider control
+        // slider reacts to camera changes
         camera.translateZProperty().addListener((obs, oldVal, newVal) -> {
             sliderValue.set(-newVal.doubleValue());
         });
 
-        // Slider → Kamera control
+        // camera reacts to slider changes
         sliderValue.addListener((obs, oldVal, newVal) -> {
             camera.setTranslateZ(-newVal.doubleValue());
         });
