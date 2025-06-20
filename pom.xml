@@ -7,7 +7,6 @@
     <groupId>org.example</groupId>
     <artifactId>AdJa_git_classroom</artifactId>
     <version>5.0</version>
-    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.release>24</maven.compiler.release>
@@ -15,11 +14,6 @@
         <javafx.version>24</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
     </properties>
-
-    <modules>
-        <module>assignments</module>
-        <module>project</module>
-    </modules>
 
     <dependencies>
         <dependency>
@@ -31,6 +25,11 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>24</version>
+        </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>5.5.0</version>
         </dependency>
     </dependencies>
 
