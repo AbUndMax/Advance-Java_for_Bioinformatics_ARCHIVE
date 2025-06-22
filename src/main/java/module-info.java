@@ -1,19 +1,15 @@
-module AdJa.git.classroom {
+module explorer {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.graphics;
     requires java.desktop;
-    exports assignment02;
+    requires com.esotericsoftware.kryo;
+    requires org.objenesis;
+    requires java.prefs;
 
-    opens assignment03.window to javafx.fxml;
-    exports assignment03;
-
-    opens assignment04.window to javafx.fxml;
-    exports assignment04;
-
-    opens assignment05.window to javafx.fxml;
-    exports assignment05;
-
-    opens assignment06.window to javafx.fxml;
-    exports assignment06;
+    opens explorer.window to javafx.fxml;
+    exports explorer;
+    opens explorer.window.controller to javafx.fxml;
+    opens explorer.model to com.esotericsoftware.kryo;
+    opens explorer.model.treeBuilder to com.esotericsoftware.kryo;
 }
