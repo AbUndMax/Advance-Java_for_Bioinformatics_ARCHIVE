@@ -104,7 +104,7 @@
       </MenuBar>
    </top>
    <center>
-      <SplitPane fx:id="mainSplitPane" dividerPositions="0.35" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="mainSplitPane" dividerPositions="0.4" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="350.0">
                <children>

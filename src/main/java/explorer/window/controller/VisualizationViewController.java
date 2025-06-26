@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 public class VisualizationViewController {
     @FXML
@@ -71,6 +72,9 @@ public class VisualizationViewController {
 
     @FXML
     private Slider zoomSlider;
+
+    @FXML
+    private ColorPicker selectionColorPicker;
 
     public Button getButtonCntrlDown() {
         return buttonCntrlDown;
@@ -158,6 +162,10 @@ public class VisualizationViewController {
 
     public Slider getZoomSlider() {
         return zoomSlider;
+    }
+
+    public ColorPicker getSelectionColorPicker() {
+        return selectionColorPicker;
     }
 
     @FXML

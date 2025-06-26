@@ -4,6 +4,7 @@ import explorer.model.AnatomyNode;
 import explorer.model.AppConfig;
 import explorer.model.ObjIO;
 import explorer.window.ControllerRegistry;
+import explorer.window.selection.SelectionBinder;
 import explorer.window.controller.VisualizationViewController;
 import explorer.window.vistools.Axes;
 import explorer.window.vistools.HumanBody;
@@ -21,8 +22,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.PhongMaterial;
+import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
+
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -61,6 +65,7 @@ public class VisualizationViewPresenter {
         setupTripodPane();
         setupVisualizationViewButtons();
         setupClearSelectionButton();
+        setupColorPicker();
     }
 
     /**
@@ -282,10 +287,11 @@ public class VisualizationViewPresenter {
                 TreeView<AnatomyNode> isATreeView = registry.getSelectionViewController().getTreeViewIsA();
                 TreeView<AnatomyNode> partOfTreeView = registry.getSelectionViewController().getTreeViewPartOf();
                 ListView<String> listView = registry.getSelectionViewController().getSelectionListView();
-                humanBody.getMeshSelection().bindTreeView(isATreeView);
-                humanBody.getMeshSelection().bindTreeView(partOfTreeView);
-                humanBody.getMeshSelection().bindListView(listView);
                 humanBody.assignNames(isATreeView.getRoot(), partOfTreeView.getRoot());
+                SelectionBinder binder = new SelectionBinder(humanBody);
+                binder.bindTreeView(isATreeView);
+                binder.bindTreeView(partOfTreeView);
+                binder.bindListView(listView);
             }
 
             @Override
@@ -305,10 +311,38 @@ public class VisualizationViewPresenter {
      */
     private void setupClearSelectionButton() {
         registry.getSelectionViewController().getClearSelectionButton().setOnAction(e -> {
-            humanBody.getMeshSelection().getSourceOfTruth().clear();
+            humanBody.getSelectionModel().clearSelection();
             registry.getSelectionViewController().getTreeViewPartOf().getSelectionModel().clearSelection();
             registry.getSelectionViewController().getTreeViewIsA().getSelectionModel().clearSelection();
             visController.getTextFieldSearchBar().clear();
+        });
+    }
+
+    private void setupColorPicker() {
+        ColorPicker colorPicker = visController.getSelectionColorPicker();
+
+        PhongMaterial selectedMaterial = new PhongMaterial(Color.YELLOW);
+        selectedMaterial.setSpecularColor(Color.BLACK);
+
+        // react on colorPicker selections
+        colorPicker.valueProperty().addListener((obs, oldColor, newColor) -> {
+            selectedMaterial.setDiffuseColor(newColor);
+        });
+
+        // add a listener to the currentSelection list to make sure all selected nodes get colored
+        // and all deselected nodes get the default coloring back
+        humanBody.getSelectionModel().addListener(change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                    for (MeshView meshView : change.getAddedSubList()) {
+                        Platform.runLater(() -> meshView.setMaterial(selectedMaterial));
+                    }
+                } else if (change.wasRemoved()) {
+                    for (MeshView meshView : change.getRemoved()) {
+                        Platform.runLater(() -> meshView.setMaterial(humanBody.getDefaultMaterial()));
+                    }
+                }
+            }
         });
     }
 
