@@ -35,13 +35,7 @@ public class VisualizationViewController {
     private Button buttonCntrlUp;
 
     @FXML
-    private Button buttonFindAll;
-
-    @FXML
-    private Button buttonFindFirst;
-
-    @FXML
-    private Button buttonFindNext;
+    private Button clearSelectionButton;
 
     @FXML
     private ToggleGroup drawMode;
@@ -62,25 +56,22 @@ public class VisualizationViewController {
     private RadioButton radioTranslation;
 
     @FXML
+    private Button redoButton;
+
+    @FXML
     private Button resetHideButton;
 
     @FXML
-    private ChoiceBox<String> searchChoice;
-
-    @FXML
-    private Label searchHitLabel;
-
-    @FXML
     private ColorPicker selectionColorPicker;
-
-    @FXML
-    private TextField textFieldSearchBar;
 
     @FXML
     private ToggleGroup threeDControl;
 
     @FXML
     private Pane tripodPane;
+
+    @FXML
+    private Button undoButton;
 
     @FXML
     private Pane visualizationPane;
@@ -90,6 +81,30 @@ public class VisualizationViewController {
 
     @FXML
     private Slider zoomSlider;
+
+    @FXML
+    private SplitMenuButton showConceptButton;
+
+    @FXML
+    private MenuItem addToCurrentShowMenuItem;
+
+    @FXML
+    private MenuItem showFullHumanBodyMenuItem;
+
+    @FXML
+    private MenuButton animateMenuButton;
+
+    @FXML
+    private MenuItem explosionMenuItem;
+
+    @FXML
+    private MenuItem pulseMenuItem;
+
+    @FXML
+    private MenuItem contRotateMenuItem;
+
+    @FXML
+    private MenuItem removeFromCurrentShowMenuItem;
 
     public Button getButtonCntrlDown() {
         return buttonCntrlDown;
@@ -127,68 +142,16 @@ public class VisualizationViewController {
         return buttonCntrlUp;
     }
 
-    public Button getButtonFindAll() {
-        return buttonFindAll;
+    public Button getClearSelectionButton() {
+        return clearSelectionButton;
     }
 
-    public Button getButtonFindFirst() {
-        return buttonFindFirst;
-    }
-
-    public Button getButtonFindNext() {
-        return buttonFindNext;
-    }
-
-    public RadioButton getRadioRotation() {
-        return radioRotation;
-    }
-
-    public RadioButton getRadioTranslation() {
-        return radioTranslation;
-    }
-
-    public Label getSearchHitLabel() {
-        return searchHitLabel;
-    }
-
-    public TextField getTextFieldSearchBar() {
-        return textFieldSearchBar;
-    }
-
-    public ToggleGroup getThreeDControl() {
-        return threeDControl;
-    }
-
-    public StackPane getVisualizationStackPane() {
-        return visualizationStackPane;
-    }
-
-    public Pane getTripodPane() {
-        return tripodPane;
-    }
-
-    public Pane getVisualizationPane() {
-        return visualizationPane;
-    }
-
-    public Slider getZoomSlider() {
-        return zoomSlider;
-    }
-
-    public ColorPicker getSelectionColorPicker() {
-        return selectionColorPicker;
+    public ToggleGroup getDrawMode() {
+        return drawMode;
     }
 
     public ToggleButton getHideModeToggle() {
         return hideModeToggle;
-    }
-
-    public Button getResetHideButton() {
-        return resetHideButton;
-    }
-
-    public ChoiceBox<String> getSearchChoice() {
-        return searchChoice;
     }
 
     public RadioButton getRadioFill() {
@@ -199,14 +162,86 @@ public class VisualizationViewController {
         return radioLines;
     }
 
-    public ToggleGroup getDrawMode() {
-        return drawMode;
+    public RadioButton getRadioRotation() {
+        return radioRotation;
+    }
+
+    public RadioButton getRadioTranslation() {
+        return radioTranslation;
+    }
+
+    public Button getRedoButton() {
+        return redoButton;
+    }
+
+    public Button getResetHideButton() {
+        return resetHideButton;
+    }
+
+    public ColorPicker getSelectionColorPicker() {
+        return selectionColorPicker;
+    }
+
+    public ToggleGroup getThreeDControl() {
+        return threeDControl;
+    }
+
+    public Pane getTripodPane() {
+        return tripodPane;
+    }
+
+    public Button getUndoButton() {
+        return undoButton;
+    }
+
+    public Pane getVisualizationPane() {
+        return visualizationPane;
+    }
+
+    public StackPane getVisualizationStackPane() {
+        return visualizationStackPane;
+    }
+
+    public Slider getZoomSlider() {
+        return zoomSlider;
+    }
+
+    public SplitMenuButton getShowConceptButton() {
+        return showConceptButton;
+    }
+
+    public MenuItem getAddToCurrentShowMenuItem() {
+        return addToCurrentShowMenuItem;
+    }
+
+    public MenuItem getShowFullHumanBodyMenuItem() {
+        return showFullHumanBodyMenuItem;
+    }
+
+    public MenuButton getAnimateMenuButton() {
+        return animateMenuButton;
+    }
+
+    public MenuItem getExplosionMenuItem() {
+        return explosionMenuItem;
+    }
+
+    public MenuItem getPulseMenuItem() {
+        return pulseMenuItem;
+    }
+
+    public MenuItem getContRotateMenuItem() {
+        return contRotateMenuItem;
+    }
+
+    public MenuItem getRemoveFromCurrentShowMenuItem() {
+        return removeFromCurrentShowMenuItem;
     }
 
     @FXML
     public void initialize() {
-        searchChoice.setValue("part-of");
         radioLines.setUserData(DrawMode.LINE);
         radioFill.setUserData(DrawMode.FILL);
+        showFullHumanBodyMenuItem.setDisable(true);
     }
 }

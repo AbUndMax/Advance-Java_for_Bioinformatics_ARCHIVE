@@ -3,12 +3,9 @@ package explorer.window.controller;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
-
-import java.util.Arrays;
 
 public class MainViewController {
 
@@ -38,9 +35,6 @@ public class MainViewController {
     private MenuItem menuButtonClose;
 
     @FXML
-    private MenuItem menuButtonOpen;
-
-    @FXML
     private MenuItem menuButtonExpandIsA;
 
     @FXML
@@ -57,6 +51,12 @@ public class MainViewController {
 
     @FXML
     private MenuItem menuButtonResetSelection;
+
+    @FXML
+    private MenuItem menuButtonUndo;
+
+    @FXML
+    private MenuItem menuButtonRedo;
 
     @FXML
     private MenuItem menuButtonRotateDown;
@@ -91,6 +91,9 @@ public class MainViewController {
     @FXML
     private MenuItem menuButtonZoomOut;
 
+    @FXML
+    private MenuItem menuButtonInvalidConfig;
+
     // Controller getters
     public SelectionViewController getSelectionViewController() {
         return selectionController;
@@ -109,10 +112,6 @@ public class MainViewController {
 
     public MenuItem getMenuButtonClose() {
         return menuButtonClose;
-    }
-
-    public MenuItem getMenuButtonOpen() {
-        return menuButtonOpen;
     }
 
     public MenuItem getMenuButtonExpandIsA() {
@@ -183,6 +182,18 @@ public class MainViewController {
         return menuButtonTranslateUp;
     }
 
+    public MenuItem getMenuButtonInvalidConfig() {
+        return menuButtonInvalidConfig;
+    }
+
+    public MenuItem getMenuButtonUndo() {
+        return menuButtonUndo;
+    }
+
+    public MenuItem getMenuButtonRedo() {
+        return menuButtonRedo;
+    }
+
     /**
      * All controls set in the initializer are just for basic GUI behavior!
      * Nothing related to ANY model or window functionality!
@@ -192,7 +203,10 @@ public class MainViewController {
         Platform.runLater(() -> mainSplitPane.setDividerPositions(0.4));
         fixDividerOnResize(mainSplitPane);
         setupAboutMessage();
-        menuButtonClose.setOnAction(e -> Platform.exit());
+        menuButtonClose.setOnAction(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
     /**

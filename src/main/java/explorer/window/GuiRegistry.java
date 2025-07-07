@@ -1,9 +1,11 @@
 package explorer.window;
 
+import explorer.window.command.CommandManager;
 import explorer.window.controller.*;
 import explorer.window.presenter.MainViewPresenter;
 import explorer.window.presenter.SelectionViewPresenter;
 import explorer.window.presenter.VisualizationViewPresenter;
+import explorer.window.selection.SelectionBinder;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
@@ -21,6 +23,9 @@ public class GuiRegistry {
     private final SelectionViewPresenter selectionViewPresenter;
     private final VisualizationViewPresenter visualizationViewPresenter;
 
+    private final CommandManager commandManager = new CommandManager();
+    private final SelectionBinder binder;
+
     public GuiRegistry() throws IOException {
         URL mainFXML = getClass().getResource("/fxml/MainView.fxml");
         FXMLLoader loader = new FXMLLoader(mainFXML);
@@ -32,6 +37,8 @@ public class GuiRegistry {
         mainViewPresenter = new MainViewPresenter(this);
         selectionViewPresenter = new SelectionViewPresenter(this);
         visualizationViewPresenter = new VisualizationViewPresenter(this);
+
+        binder = new SelectionBinder(visualizationViewPresenter.getHumanBody());
     }
 
     public Parent getRoot() {
@@ -60,5 +67,13 @@ public class GuiRegistry {
 
     public VisualizationViewPresenter getVisualizationViewPresenter() {
         return visualizationViewPresenter;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
+    }
+
+    public SelectionBinder getSelectionBinder() {
+        return binder;
     }
 }

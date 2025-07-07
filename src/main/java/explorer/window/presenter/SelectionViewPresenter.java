@@ -10,6 +10,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
+import javafx.scene.control.TreeView;
 
 public class SelectionViewPresenter {
 
@@ -22,6 +23,10 @@ public class SelectionViewPresenter {
      */
     private TreeItem<AnatomyNode> selectedItem() {
         return lastFocusedTreeView.getSelectionModel().getSelectedItem();
+    }
+
+    public TreeView<AnatomyNode> getLastFocusedTreeView() {
+        return lastFocusedTreeView;
     }
 
     private final SelectionViewController controller;
@@ -38,7 +43,7 @@ public class SelectionViewPresenter {
         // default is partOf tree
         lastFocusedTreeView = treeViewPartOf;
 
-        setupButtons();
+        setupButtons(registry);
 
         setupSearchBar(registry);
     }
@@ -79,15 +84,13 @@ public class SelectionViewPresenter {
     /**
      * Configures the selection, expansion, and collapse buttons and their associated actions.
      */
-    private void setupButtons() {
+    private void setupButtons(GuiRegistry registry) {
         controller.getButtonSelectAtTreeNode().setOnAction(e -> {
-            TreeUtils.selectAllBelowGivenNode(selectedItem(), lastFocusedTreeView.getSelectionModel());
+            registry.getSelectionBinder().selectAllBelow(selectedItem(), lastFocusedTreeView);
         });
-        // TODO: setOnActions & eventually add new button: clear selection (austauschen von "inverse selection" to "clear selection")
-        controller.getButtonExpandAtTreeNode().setOnAction(e ->
-                TreeUtils.expandAllBelowGivenNode(selectedItem()));
-        controller.getButtonCollapseAtTreeNode().setOnAction(e ->
-                TreeUtils.collapseAllNodesUptToGivenNode(selectedItem()));
+
+        controller.getExpandMenuItem().setOnAction(e -> TreeUtils.expandAllBelowGivenNode(selectedItem()));
+        controller.getCollapseMenuItem().setOnAction(e -> TreeUtils.collapseAllNodesUptToGivenNode(selectedItem()));
     }
 
     /**
@@ -97,17 +100,21 @@ public class SelectionViewPresenter {
      * @param registry The ControllerRegistry containing references to UI elements.
      */
     private void setupSearchBar(GuiRegistry registry) {
-        TextField searchBar = registry.getVisualizationViewController().getTextFieldSearchBar();
-        Button nextButton = registry.getVisualizationViewController().getButtonFindNext();
-        Button firstButton = registry.getVisualizationViewController().getButtonFindFirst();
-        Button allButton = registry.getVisualizationViewController().getButtonFindAll();
-        Label hitLabel = registry.getVisualizationViewController().getSearchHitLabel();
+        TextField searchBar = controller.getTextFieldSearchBar();
+        Button nextButton = controller.getButtonFindNext();
+        Button firstButton = controller.getButtonFindFirst();
+        Button allButton = controller.getButtonFindAll();
+        Label hitLabel = controller.getSearchHitLabel();
 
 
         Search search = new Search();
 
         searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) search.resetSearch();
+            if (newValue.isEmpty()) {
+                search.resetSearch();
+                controller.getTreeViewIsA().getSelectionModel().clearSelection();
+                controller.getTreeViewPartOf().getSelectionModel().clearSelection();
+            }
             else {
                 search.performSearch(newValue, treeOfChoice(registry));
                 if (search.getNumberOfHits() > 0) {
@@ -147,7 +154,7 @@ public class SelectionViewPresenter {
      * @return The selected TreeView (either isA or partOf).
      */
     private TreeView<AnatomyNode> treeOfChoice(GuiRegistry registry) {
-        ChoiceBox<String> choiceBox = registry.getVisualizationViewController().getSearchChoice();
+        ChoiceBox<String> choiceBox = controller.getSearchChoice();
 
         TreeView<AnatomyNode> isATree = registry.getSelectionViewController().getTreeViewIsA();
         TreeView<AnatomyNode> partOfTree = registry.getSelectionViewController().getTreeViewPartOf();

@@ -4,17 +4,19 @@ import explorer.model.AnatomyNode;
 import explorer.model.AppConfig;
 import explorer.model.ObjIO;
 import explorer.window.GuiRegistry;
-import explorer.window.selection.MultipleMeshSelectionModel;
+import explorer.window.command.Command;
+import explorer.window.command.CommandManager;
+import explorer.window.command.commands.*;
+import explorer.window.selection.MeshSelectionManager;
 import explorer.window.selection.SelectionBinder;
 import explorer.window.controller.VisualizationViewController;
-import explorer.window.vistools.Axes;
-import explorer.window.vistools.HumanBody;
-import explorer.window.vistools.MyCamera;
-import explorer.window.vistools.TransformUtils;
+import explorer.window.vistools.*;
+import explorer.window.vistools.animations.AnimationManager;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -28,11 +30,12 @@ import javafx.scene.shape.DrawMode;
 import javafx.scene.shape.MeshView;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static explorer.window.vistools.TransformUtils.applyGlobalRotation;
 
 public class VisualizationViewPresenter {
 
@@ -41,7 +44,7 @@ public class VisualizationViewPresenter {
 
     // constants copied from assignment06
     // initial view on the tripod is saved as Affine. It is also used as reset position.
-    private static final Affine INITIAL_TRANSFORM = new Affine(
+    public static final Affine INITIAL_TRANSFORM = new Affine(
             1.0, 0.0, 0.0, 0.0,
             0.0, 0.0, -1.0, 0.0,
             0.0, 1.0, 0.0, 0.0
@@ -49,8 +52,11 @@ public class VisualizationViewPresenter {
     private static final int ROTATION_STEP = 10;
 
     private final MyCamera camera = new MyCamera();
-    private HumanBody humanBody = new HumanBody();
+    private final HumanBody humanBody = new HumanBody();
     private final Group contentGroup;
+    private final Group anatomyGroup = new Group();
+    private final AnimationManager animationManager;
+
 
     /**
      * Initializes the visualization view presenter by setting up the 3D visualization,
@@ -62,10 +68,13 @@ public class VisualizationViewPresenter {
         this.registry = registry;
         this.visController = registry.getVisualizationViewController();
 
-        contentGroup = setupVisualisationPane();
+        animationManager = new AnimationManager(registry.getCommandManager());
+        contentGroup = setupVisualisationPane(registry.getCommandManager());
+
         setupTripodPane();
-        setupVisualizationViewButtons();
-        setupClearSelectionButton();
+        setupVisualizationViewButtons(registry.getCommandManager());
+        setupClearSelectionButton(registry.getCommandManager());
+        setupShowConceptButton(registry.getCommandManager());
         setupMeshRenderControls();
     }
 
@@ -74,7 +83,7 @@ public class VisualizationViewPresenter {
      * Creates and configures a 3D scene with lighting, camera, and background color.
      * Adds the configured subscene to the application's 3D drawing pane.
      */
-    private Group setupVisualisationPane() {
+    private Group setupVisualisationPane(CommandManager commandManager) {
         Pane visualizationPane = visController.getVisualizationPane();
         Group contentGroup = new Group();
         Group root3d = new Group(contentGroup);
@@ -104,18 +113,75 @@ public class VisualizationViewPresenter {
         visualizationPane.getChildren().add(subScene);
 
         // setup rotation via mouse:
-        TransformUtils.setupMouseRotation(visualizationPane, contentGroup);
-        //add zoom functionality via scrolling
-        visualizationPane.setOnScroll(camera::zoomAndPanScrolling);
+        TransformUtils.setupMouseRotation(visualizationPane, contentGroup, commandManager, animationManager);
 
-        // focus on contentGroup
-        camera.setFocus(contentGroup);
+        //add zoom functionality via scrolling
+        visPaneOnScroll(visualizationPane, commandManager);
+
+        // focus on anatomyGroup
+        camera.setFocus(anatomyGroup);
+
+        // add automatic centering each time the group gets changed
+        anatomyGroup.getChildren().addListener((ListChangeListener<Node>) change -> {
+            TransformUtils.centerGroupToItself(anatomyGroup);
+        });
 
         // load the human body parts after the GUI is rendered
         Platform.runLater(this::loadHumanBody);
         contentGroup.getTransforms().setAll(INITIAL_TRANSFORM);
 
         return contentGroup;
+    }
+
+    private void visPaneOnScroll(Pane visualizationPane, CommandManager commandManager) {
+
+        double[] scrollStartZoom = {0};
+        double[] scrollStartTranslateX = {0};
+        double[] scrollStartTranslateY = {0};
+
+        // Track when scroll starts
+        visualizationPane.setOnScrollStarted(event -> {
+
+            scrollStartZoom[0] = camera.getTranslateZ();
+            scrollStartTranslateX[0] = camera.getTranslateX();
+            scrollStartTranslateY[0] = camera.getTranslateY();
+        });
+
+        // Apply camera movement live
+        visualizationPane.setOnScroll(event -> {
+            double deltaY = camera.translateValue(event.getDeltaY()) * 0.9;
+            double deltaX = camera.translateValue(event.getDeltaX()) * 0.9;
+            if (event.isShiftDown()) { // if shift is pressed, instead if zooming, we pan the camera
+                camera.pan(deltaX, deltaY);
+            }
+            else {
+                camera.zoom(deltaY);
+            }
+        });
+
+        // When scrolling ends -> create command
+        visualizationPane.setOnScrollFinished(event -> {
+
+            if (event.isShiftDown()) {
+                double totalDeltaX = camera.getTranslateX() - scrollStartTranslateX[0];
+                double totalDeltaY = camera.getTranslateY() - scrollStartTranslateY[0];
+                if (totalDeltaX != 0 || totalDeltaY != 0) {
+                    commandManager.executeCommand(new TranslateMemoryCommand(camera,
+                                                                             scrollStartTranslateX[0],
+                                                                             scrollStartTranslateY[0],
+                                                                             camera.getTranslateX(),
+                                                                             camera.getTranslateY()));
+                }
+
+            } else {
+                double totalZoomDelta = camera.getTranslateZ() - scrollStartZoom[0];
+                if (totalZoomDelta != 0) {
+                    commandManager.executeCommand(new ZoomMemoryCommand(camera,
+                                                                        scrollStartZoom[0],
+                                                                        camera.getTranslateZ()));
+                }
+            }
+        });
     }
 
     /**
@@ -154,68 +220,93 @@ public class VisualizationViewPresenter {
     /**
      * Configures directional movement buttons and zoom controls for the 3D view.
      */
-    private void setupVisualizationViewButtons() {
+    private void setupVisualizationViewButtons(CommandManager commandManager) {
         // Record-Type for keeping the actions better together
         // with a small pun ... DirAction... DIRAction ... DIRECTION ... got it? ☚(ﾟヮﾟ☚)
-        record DirAction(Button btn, Point3D rotAxis, double rotAngle, Point3D trans) {}
+        record DirAction(Button btn, Command rotateCmd, Command translateCmd) {}
 
         // All directions and its corresponding buttons
         List<DirAction> actions = List.of(
                 // Left UP
                 new DirAction(visController.getButtonCntrlLeftUp(),
-                              new Point3D(1,0,1),   -ROTATION_STEP,
-                              new Point3D(1, 1, 0)),
+                              new RotateCommand(contentGroup, new Point3D(1,0,1), -ROTATION_STEP),
+                              new TranslateCommand(camera, 1, 1)),
                 // UP
                 new DirAction(visController.getButtonCntrlUp(),
-                              new Point3D(1,0,0),   -ROTATION_STEP,
-                              new Point3D(0, 1, 0)),
+                              new RotateCommand(contentGroup, new Point3D(1,0,0), -ROTATION_STEP),
+                              new TranslateCommand(camera, 0, 1)),
                 // Right UP
                 new DirAction(visController.getButtonCntrlRightUp(),
-                              new Point3D(1,1,0),   -ROTATION_STEP,
-                              new Point3D(-1, 1, 0)),
+                              new RotateCommand(contentGroup, new Point3D(1,1,0), -ROTATION_STEP),
+                              new TranslateCommand(camera, -1, 1)),
                 // Left DOWN
                 new DirAction(visController.getButtonCntrlLeftDown(),
-                              new Point3D(1,1,0), ROTATION_STEP,
-                              new Point3D(1, -1, 0)),
+                              new RotateCommand(contentGroup, new Point3D(1,1,0), ROTATION_STEP),
+                              new TranslateCommand(camera, 1, -1)),
                 // DOWN
                 new DirAction(visController.getButtonCntrlDown(),
-                              new Point3D(1,0,0), ROTATION_STEP,
-                              new Point3D(0, -1, 0)),
+                              new RotateCommand(contentGroup, new Point3D(1,0,0), ROTATION_STEP),
+                              new TranslateCommand(camera, 0, -1)),
                 // Right DOWN
                 new DirAction(visController.getButtonCntrlRightDown(),
-                              new Point3D(1,0,1), ROTATION_STEP,
-                              new Point3D(-1, -1, 0)),
+                              new RotateCommand(contentGroup, new Point3D(1,0,1), ROTATION_STEP),
+                              new TranslateCommand(camera, -1, -1)),
                 // LEFT
                 new DirAction(visController.getButtonCntrlLeft(),
-                              new Point3D(0,1,0), ROTATION_STEP,
-                              new Point3D(1,0, 0)),
+                              new RotateCommand(contentGroup, new Point3D(0,1,0), ROTATION_STEP),
+                              new TranslateCommand(camera, -1 ,0)),
                 // RIGHT
                 new DirAction(visController.getButtonCntrlRight(),
-                              new Point3D(0,1,0),   -ROTATION_STEP,
-                              new Point3D(-1,0, 0))
+                              new RotateCommand(contentGroup, new Point3D(0,1,0), -ROTATION_STEP),
+                              new TranslateCommand(camera, -1, 0))
         );
 
-        // Alle Action-Handler in der Schleife setzen
-        for (DirAction a : actions) {
-            a.btn().setOnAction(e -> {
-                if (visController.getRadioRotation().isSelected()) {
-                    applyGlobalRotation(contentGroup, a.rotAxis(), a.rotAngle());
-                } else {
-                    Point3D v = a.trans();
-                    camera.pan(v.getX(), v.getY());
-                }
+        // Setup all direction Buttons using a loop
+        for (DirAction action : actions) {
+            action.btn().setOnAction(e -> {
+                Command cmd = visController.getRadioRotation().isSelected()
+                        ? action.rotateCmd()
+                        : action.translateCmd();
+                commandManager.executeCommand(cmd);
             });
         }
 
         // set zoom functions
-        visController.getButtonCntrlReset().setOnAction(e -> resetView());
-        setupZoomSlider();
+        visController.getButtonCntrlReset().setOnAction(e -> resetView(commandManager));
+        setupZoomSlider(commandManager);
+
+        // set animation buttons
+        visController.getExplosionMenuItem().setOnAction(event -> {
+            animationManager.explosion(anatomyGroup, camera);
+        });
+
+        visController.getPulseMenuItem().setOnAction(event -> {
+            animationManager.pulse(anatomyGroup);
+        });
+
+        visController.getContRotateMenuItem().setOnAction(event -> {
+            animationManager.contRotation(contentGroup,
+                                          1,
+                                          new Affine(contentGroup.getTransforms().getFirst()),
+                                          new Point3D(0, 1, 0));
+        });
+
+        // set undo / redo functions
+        Button undo = visController.getUndoButton();
+        undo.setOnAction(event -> commandManager.undo());
+        Button redo = visController.getRedoButton();
+        redo.setOnAction(event -> commandManager.redo());
+
+        // Bind disable properties to CommandManager's last undo/redo command
+        undo.disableProperty().bind(commandManager.getLastUndoCommand().isNull());
+        redo.disableProperty().bind(commandManager.getLastRedoCommand().isNull());
+
     }
 
     /**
      * sets up the zoom slider and its bidirectional binding of the camera position
      */
-    private void setupZoomSlider() {
+    private void setupZoomSlider(CommandManager commandManager) {
         Slider slider = visController.getZoomSlider();
 
         DoubleProperty sliderValue = new SimpleDoubleProperty();
@@ -228,9 +319,23 @@ public class VisualizationViewPresenter {
             sliderValue.set(-newVal.doubleValue());
         });
 
+        // setOnMousepressed and Released for Undo / Redo functionality
+        double[] startZoom = {0};
+
+        slider.setOnMousePressed(e -> {
+            startZoom[0] = camera.getTranslateZ();
+        });
+
+        slider.setOnMouseReleased(e -> {
+            double endZoom = camera.getTranslateZ();
+            if (startZoom[0] != endZoom) {
+                commandManager.executeCommand(new ZoomMemoryCommand(camera, startZoom[0], endZoom));
+            }
+        });
+
         // camera reacts to slider changes
-        sliderValue.addListener((obs, oldVal, newVal) -> {
-            camera.setTranslateZ(-newVal.doubleValue());
+        slider.valueProperty().addListener((obs, oldVal, newVal) -> {
+            camera.setTranslateZ(-newVal.doubleValue()); // Live-Zoom without command
         });
 
         slider.valueProperty().bindBidirectional(sliderValue);
@@ -255,7 +360,6 @@ public class VisualizationViewPresenter {
                 visController.getVisualizationStackPane().getChildren().remove(overlay);
                 loadHumanBody();
             });
-            // TODO: eventually add "download" button that allows to fetch the files
 
             overlay.setCenter(openButton);
             visController.getVisualizationStackPane().getChildren().add(overlay);
@@ -279,17 +383,18 @@ public class VisualizationViewPresenter {
             protected void succeeded() {
                 super.succeeded();
                 visualizationStack.getChildren().remove(progressBar);
-                TransformUtils.centerGroupToItself(humanBody);
 
                 // add humanBody to the contentGroup
-                contentGroup.getChildren().add(humanBody);
+                anatomyGroup.getChildren().addAll(humanBody.getMeshes());
+                contentGroup.getChildren().add(anatomyGroup);
+                resetView(null); // initial reset should not used as Command
 
                 // bind the TreeViews to the MeshSelection
                 TreeView<AnatomyNode> isATreeView = registry.getSelectionViewController().getTreeViewIsA();
                 TreeView<AnatomyNode> partOfTreeView = registry.getSelectionViewController().getTreeViewPartOf();
                 ListView<String> listView = registry.getSelectionViewController().getSelectionListView();
                 humanBody.assignNames(isATreeView.getRoot(), partOfTreeView.getRoot());
-                SelectionBinder binder = new SelectionBinder(humanBody);
+                SelectionBinder binder = registry.getSelectionBinder();
                 binder.bindTreeView(isATreeView);
                 binder.bindTreeView(partOfTreeView);
                 binder.bindListView(listView);
@@ -310,13 +415,67 @@ public class VisualizationViewPresenter {
     /**
      * clears all selections
      */
-    private void setupClearSelectionButton() {
-        registry.getSelectionViewController().getClearSelectionButton().setOnAction(e -> {
-            humanBody.getSelectionModel().clearSelection();
-            registry.getSelectionViewController().getTreeViewPartOf().getSelectionModel().clearSelection();
-            registry.getSelectionViewController().getTreeViewIsA().getSelectionModel().clearSelection();
-            visController.getTextFieldSearchBar().clear();
+    private void setupClearSelectionButton(CommandManager commandManager) {
+        visController.getClearSelectionButton().setOnAction(e -> {
+            commandManager.executeCommand(new ClearSelectionCommand(humanBody,
+                                                                    registry.getSelectionViewController().getTreeViewIsA(),
+                                                                    registry.getSelectionViewController().getTreeViewPartOf(),
+                                                                    registry.getSelectionViewController().getTextFieldSearchBar()));
         });
+    }
+
+    private void setupShowConceptButton(CommandManager commandManager) {
+
+        // Main action of the SplitButton
+        visController.getShowConceptButton().setOnAction(e -> {
+            ArrayList<MeshView> meshesToShow = selectedMeshes();
+            if (!meshesToShow.isEmpty()) {
+                animationManager.clearAnimations();
+
+                commandManager.executeCommand(
+                        new ShowConceptCommand(meshesToShow, anatomyGroup, humanBody, true));
+            }
+        });
+
+        // add to current Shown meshes
+        visController.getAddToCurrentShowMenuItem().setOnAction(event -> {
+            commandManager.executeCommand(
+                    new ShowConceptCommand(selectedMeshes(), anatomyGroup, humanBody, false)
+            );
+        });
+
+        visController.getRemoveFromCurrentShowMenuItem().setOnAction(event -> {
+            animationManager.clearAnimations();
+
+            commandManager.executeCommand(
+                    new RemoveConceptCommand(selectedMeshes(), anatomyGroup));
+        });
+
+        // show full human body
+        visController.getShowFullHumanBodyMenuItem().setOnAction(event -> {
+            animationManager.clearAnimations();
+
+            commandManager.executeCommand(
+                    new ShowConceptCommand(humanBody.getMeshes(), anatomyGroup, humanBody, true)
+            );
+        });
+
+        // control visibility of "show full human body" if full human body is already shown
+        anatomyGroup.getChildren().addListener((ListChangeListener<Node>) change -> {
+            boolean humanBodyShown = new HashSet<>(anatomyGroup.getChildren())
+                    .containsAll(humanBody.getMeshes());
+
+            visController.getShowFullHumanBodyMenuItem().setDisable(humanBodyShown);
+        });
+    }
+
+    private ArrayList<MeshView> selectedMeshes() {
+        ObservableList<TreeItem<AnatomyNode>> selectedItems = registry.getSelectionViewPresenter().getLastFocusedTreeView().getSelectionModel().getSelectedItems();
+        ArrayList<MeshView> meshesToDraw = new ArrayList<>();
+        for (TreeItem<AnatomyNode> selectedItem : selectedItems) {
+            meshesToDraw.addAll(humanBody.getMeshesOfFilesIDs(selectedItem.getValue().getFileIDs()));
+        }
+        return meshesToDraw;
     }
 
     private void setupMeshRenderControls() {
@@ -326,7 +485,7 @@ public class VisualizationViewPresenter {
         ToggleButton hideMode = visController.getHideModeToggle();
         Button resetHide = visController.getResetHideButton();
 
-        MultipleMeshSelectionModel meshSelectionModel = humanBody.getSelectionModel();
+        MeshSelectionManager meshSelectionModel = humanBody.getSelectionModel();
 
         // add a listener to the currentSelection list to make sure all selected nodes get colored
         // and all deselected nodes get the default coloring back
@@ -346,7 +505,7 @@ public class VisualizationViewPresenter {
                     for (MeshView meshView : change.getRemoved()) {
                         Platform.runLater(() -> {
                             meshView.setDrawMode(line.isSelected() ? DrawMode.LINE : DrawMode.FILL);
-                            meshView.setMaterial(humanBody.getDefaultMaterial());
+                            meshView.setMaterial(HumanBody.SHARED_DEFAULT_MATERIAL);
                         });
                     }
                 }
@@ -362,73 +521,121 @@ public class VisualizationViewPresenter {
             }
         });
 
-        humanBody.activateSelection(hideMode, resetHide);
+        setupMeshClickability(hideMode, resetHide, registry.getCommandManager());
+    }
+
+    private void setupMeshClickability(ToggleButton hideMode, Button resetHide, CommandManager commandManager) {
+        ArrayList<MeshView> hiddenMeshes = humanBody.getHiddenMeshes();
+
+        double[] mousePressX = new double[1];
+        double[] mousePressY = new double[1];
+
+        // save the position
+        contentGroup.setOnMousePressed(event -> {
+            mousePressX[0] = event.getScreenX();
+            mousePressY[0] = event.getScreenY();
+        });
+
+        // check release position
+        contentGroup.setOnMouseReleased(event -> {
+            double mouseReleaseX = event.getScreenX();
+            double mouseReleaseY = event.getScreenY();
+
+            double distance = Math.hypot(mouseReleaseX - mousePressX[0], mouseReleaseY - mousePressY[0]);
+
+            // if distance is small, its a klick and not a drag event!
+            // drag events are reserved for rotation / translation
+            if (distance < 5) {
+                Node clickedNode = event.getPickResult().getIntersectedNode();
+                if (clickedNode instanceof MeshView meshView) {
+                    if (hideMode.isSelected()) {
+                        commandManager.executeCommand(new HideMeshCommand(meshView, hiddenMeshes));
+                    }
+                    else if (humanBody.getSelectionModel().isSelected(meshView)){
+                        commandManager.executeCommand(new ClearSelectedMeshCommand(humanBody.getSelectionModel(), meshView));
+                    }
+                    else {
+                        commandManager.executeCommand(new SelectMeshCommand(humanBody.getSelectionModel(), meshView));
+                    }
+                }
+            }
+        });
+
+        // button to reset the hidden meshes
+        resetHide.setOnAction(event -> {
+            commandManager.executeCommand(new ResetHideCommand(hiddenMeshes));
+        });
     }
 
     /**
      * Rotates the 3D content group upward along the X-axis.
      */
-    protected void rotateContentGroupUp() {
-        applyGlobalRotation(contentGroup, new Point3D(1, 0, 0), -ROTATION_STEP);
+    protected void rotateContentGroupUp(CommandManager commandManager) {
+        commandManager.executeCommand(new RotateCommand(contentGroup, new Point3D(1, 0, 0), -ROTATION_STEP));
     }
 
     /**
      * Rotates the 3D content group downward along the X-axis.
      */
-    protected void rotateContentGroupDown() {
-        applyGlobalRotation(contentGroup, new Point3D(1, 0, 0), ROTATION_STEP);
+    protected void rotateContentGroupDown(CommandManager commandManager) {
+        commandManager.executeCommand(new RotateCommand(contentGroup, new Point3D(0, 1, 0), ROTATION_STEP));
     }
 
     /**
      * Rotates the 3D content group to the left along the Y-axis.
      */
-    protected void rotateContentGroupLeft() {
-        applyGlobalRotation(contentGroup, new Point3D(0, 1, 0), ROTATION_STEP);
+    protected void rotateContentGroupLeft(CommandManager commandManager) {
+        commandManager.executeCommand(new RotateCommand(contentGroup, new Point3D(0, 1, 0), ROTATION_STEP));
     }
 
     /**
      * Rotates the 3D content group to the right along the Y-axis.
      */
-    protected void rotateContentGroupRight() {
-        applyGlobalRotation(contentGroup, new Point3D(0,1, 0), -ROTATION_STEP);
+    protected void rotateContentGroupRight(CommandManager commandManager) {
+        commandManager.executeCommand(new RotateCommand(contentGroup, new Point3D(0,1, 0), -ROTATION_STEP));
     }
 
-    protected void translateContentGroupUp() {
-        camera.pan(0, 1);
+    protected void translateContentGroupUp(CommandManager commandManager) {
+        commandManager.executeCommand(new TranslateCommand(camera, 0, 1));
     }
 
-    protected void translateContentGroupDown() {
-        camera.pan(0, -1);
+    protected void translateContentGroupDown(CommandManager commandManager) {
+        commandManager.executeCommand(new TranslateCommand(camera, 0, -1));
     }
 
-    protected void translateContentGroupLeft() {
-        camera.pan(1, 0);
+    protected void translateContentGroupLeft(CommandManager commandManager) {
+        commandManager.executeCommand(new TranslateCommand(camera, 1, 0));
     }
 
-    protected void translateContentGroupRight() {
-        camera.pan(-1, 0);
+    protected void translateContentGroupRight(CommandManager commandManager) {
+        commandManager.executeCommand(new TranslateCommand(camera, -1, 0));
     }
 
     /**
      * Zooms in the camera on the 3D content.
      */
-    protected void zoomIntoContentGroup() {
-        camera.zoomIn();
+    protected void zoomIntoContentGroup(CommandManager commandManager) {
+        commandManager.executeCommand(new ZoomCommand(camera, 1));
     }
 
     /**
      * Zooms out the camera from the 3D content.
      */
-    protected void zoomOutContentGroup() {
-        camera.zoomOut();
+    protected void zoomOutContentGroup(CommandManager commandManager) {
+        commandManager.executeCommand(new ZoomCommand(camera, -1));
     }
 
     /**
      * Resets the view of the 3D scene to its initial state by adjusting
      * the camera position and resetting the transformations of the content group.
      */
-    protected void resetView() {
-        camera.resetView();
-        contentGroup.getTransforms().setAll(INITIAL_TRANSFORM);
+    protected void resetView(CommandManager commandManager) {
+        if (commandManager != null) {
+            commandManager.executeCommand(new ResetViewCommand(contentGroup, camera));
+        }
+    }
+
+    public HumanBody getHumanBody() {
+        return humanBody;
     }
 }
