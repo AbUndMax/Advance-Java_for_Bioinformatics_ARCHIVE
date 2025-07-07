@@ -2,7 +2,7 @@ package explorer.window.selection;
 
 import explorer.model.AnatomyNode;
 import explorer.model.treetools.TreeUtils;
-import explorer.window.vistools.HumanBody;
+import explorer.window.vistools.HumanBodyMeshes;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
@@ -13,8 +13,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Binds a MeshSelection to TreeView and ListViews
-  */
+ * Binds MeshView selection state between a MeshSelection model and multiple TreeView and ListView controls.
+ * Ensures bidirectional synchronization: tree and list UI components reflect the canonical mesh selection,
+ * and user interactions in the UI update the selection model.
+ */
 public class SelectionBinder {
 
     // Observable list of currently selected Meshes -> SourceOfTruth FOR ALL SELECTIONS
@@ -27,21 +29,21 @@ public class SelectionBinder {
     private final Map<TreeView<AnatomyNode>, TreeViewBinding> treeViewBindings = new HashMap<>();
 
     /**
-     * Constructs a SlectionBinder object that manages bidirectional selection synchronization
-     * between a HumanBody and multiple TreeViews.
+     * Constructs a SelectionBinder that synchronizes mesh selections between the underlying
+     * HumanBodyMeshes model and UI controls.
      *
-     * @param humanBody the HumanBody instance containing the MeshView mappings.
+     * @param humanBodyMeshes the HumanBodyMeshes providing mesh mappings and selection model
      */
-    public SelectionBinder(HumanBody humanBody) {
-        fileIdToMeshMap = humanBody.getFileIdToMeshMap();
-        meshSelectionModel = humanBody.getSelectionModel();
+    public SelectionBinder(HumanBodyMeshes humanBodyMeshes) {
+        fileIdToMeshMap = humanBodyMeshes.getFileIdToMeshMap();
+        meshSelectionModel = humanBodyMeshes.getSelectionModel();
     }
 
     /**
-     * Binds the given TreeView to the selection source of truth, ensuring bidirectional synchronization
-     * between the TreeView selections and the selected MeshView objects.
+     * Binds a TreeView to the mesh selection model for bidirectional synchronization.
+     * TreeItem selections update the mesh selection model, and mesh selection changes update the TreeView.
      *
-     * @param treeView the TreeView to bind to the selection model.
+     * @param treeView the TreeView displaying AnatomyNode items to bind.
      */
     public void bindTreeView(TreeView<AnatomyNode> treeView) {
         TreeViewBinding binding = new TreeViewBinding(treeView);
@@ -54,19 +56,24 @@ public class SelectionBinder {
             if (binding.isSyncing) return;
             binding.isSyncing = true;
 
+            List<MeshView> meshesToSelect = new ArrayList<>();
+            List<MeshView> meshesToDeselect = new ArrayList<>();
+
             while (change.next()) {
+                // Remove mesh selections when tree nodes are deselected
                 if (change.wasRemoved()) {
                     for (TreeItem<AnatomyNode> item : change.getRemoved()) {
                         ArrayList<String> fileIDs = item.getValue().getFileIDs();
 
-                        // only selections on Leaves are counting as "selecting a mesh"
-                        if (fileIDs != null && item.getValue().isLeaf()) {
+                        // collect the meshes that should be removed
+                        if (fileIDs != null) {
                             for (String fileID : fileIDs) {
-                                meshSelectionModel.clearSelection(fileIdToMeshMap.get(fileID));
+                                meshesToDeselect.add(fileIdToMeshMap.get(fileID));
                             }
                         }
                     }
                 }
+                // Add mesh selections when tree nodes are selected
                 if (change.wasAdded()) {
                     for (TreeItem<AnatomyNode> item : change.getAddedSubList()) {
                         ArrayList<String> fileIDs = item.getValue().getFileIDs();
@@ -79,24 +86,16 @@ public class SelectionBinder {
                             //System.out.println("fileID not null");
                             for (String fileID : fileIDs) {
                                 //System.out.println("try to add:" + fileID);
-                                meshSelectionModel.select(fileIdToMeshMap.get(fileID));
-
-                                // Select all TreeItems associated with this fileID
-                                Set<TreeItem<AnatomyNode>> associatedItems = treeViewBindings.get(treeView).fileIdToTreeItem.get(fileID);
-                                if (associatedItems != null) {
-                                    for (TreeItem<AnatomyNode> associatedItem : associatedItems) {
-                                        if (!multipleSelectionModel.getSelectedItems().contains(associatedItem)) {
-                                            binding.isSyncing = true;
-                                            multipleSelectionModel.select(associatedItem);
-                                            binding.isSyncing = false;
-                                        }
-                                    }
-                                }
+                                meshesToSelect.add(fileIdToMeshMap.get(fileID));
                             }
                         }
                     }
                 }
             }
+
+            // apply batch de-/selections
+            meshSelectionModel.deselectAll(meshesToDeselect);
+            meshSelectionModel.selectAll(meshesToSelect);
 
             binding.isSyncing = false;
         });
@@ -136,7 +135,8 @@ public class SelectionBinder {
         Set<TreeItem<AnatomyNode>> itemsToSelect = treeViewBindings.get(treeView).fileIdToTreeItem.get(fileID);
         if (itemsToSelect != null) {
             for (TreeItem<AnatomyNode> item : itemsToSelect) {
-                selectionModel.select(item);
+                // meshes are only represented DIRECTLY by leaves -> so only they get selected
+                if (item.getValue().isLeaf()) selectionModel.select(item);
             }
         }
     }
@@ -161,10 +161,16 @@ public class SelectionBinder {
         }
     }
 
+    /**
+     * Binds a ListView of anatomy names to the mesh selection model.
+     * Selected mesh names are shown in the list; list interactions are disabled.
+     *
+     * @param selectionList the ListView<String> to display selected anatomy names
+     */
     public void bindListView(ListView<String> selectionList) {
         if (selectionList == null) return;
 
-        // Listen to changes in the sourceOfTruth and update the ListView accordingly
+        // Update ListView items when mesh selection model changes
         meshSelectionModel.addListener(change -> {
             while (change.next()) {
                 if (change.wasAdded()) {
@@ -198,15 +204,23 @@ public class SelectionBinder {
         selectionList.setFocusTraversable(false);
     }
 
+    /**
+     * Selects all anatomy nodes and corresponding meshes under a given tree item.
+     * Updates both TreeView selection and mesh selection model in batch.
+     *
+     * @param item the TreeItem subtree root to select
+     * @param treeView the TreeView containing the item
+     */
     public void selectAllBelow(TreeItem<AnatomyNode> item, TreeView<AnatomyNode> treeView) {
         TreeViewBinding binding = treeViewBindings.get(treeView);
 
-        // selection of the Model in TreeView and in my sourceOfTruth has to be performed seperatly and
+        // Temporarily disable sync to perform batch selection
         binding.isSyncing = true;
         ArrayList<MeshView> meshesToSelect = new ArrayList<>();
         MultipleSelectionModel<TreeItem<AnatomyNode>> selModel = treeView.getSelectionModel();
         selModel.clearSelection();
 
+        // Traverse subtree to collect and select nodes and meshes
         TreeUtils.preOrderTreeViewTraversal(item, node -> {
             selModel.select(node);
             for (String fileID : node.getValue().getFileIDs()) {
@@ -220,6 +234,10 @@ public class SelectionBinder {
         binding.isSyncing = false;
     }
 
+    /**
+     * Internal helper that maps file IDs to TreeItems for a specific TreeView.
+     * Facilitates selection synchronization between mesh model and tree UI.
+     */
     private static class TreeViewBinding {
         private final TreeView<AnatomyNode> treeView;
         // map fileID to TreeItem -> Set of Nodes is used because one FileID can be associated with multiple Items
@@ -244,14 +262,12 @@ public class SelectionBinder {
         private void mapTree(TreeItem<AnatomyNode> current) {
             if (current == null) return;
             // Only map leaves so parents aren't selected for child fileIDs
-            if (current.isLeaf()) {
-                List<String> fileIDs = current.getValue().getFileIDs();
-                if (fileIDs != null) {
-                    for (String fileID : fileIDs) {
-                        Set<TreeItem<AnatomyNode>> set = fileIdToTreeItem
-                            .computeIfAbsent(fileID, k -> new HashSet<>());
-                        set.add(current);
-                    }
+            List<String> fileIDs = current.getValue().getFileIDs();
+            if (fileIDs != null) {
+                for (String fileID : fileIDs) {
+                    Set<TreeItem<AnatomyNode>> set = fileIdToTreeItem
+                        .computeIfAbsent(fileID, k -> new HashSet<>());
+                    set.add(current);
                 }
             }
             for (TreeItem<AnatomyNode> child : current.getChildren()) {
