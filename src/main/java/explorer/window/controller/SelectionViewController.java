@@ -1,6 +1,6 @@
 package explorer.window.controller;
 
-import explorer.model.AnatomyNode;
+import explorer.model.treetools.ConceptNode;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -61,7 +61,7 @@ public class SelectionViewController {
     private ToggleButton selectionListToggle;
 
     @FXML
-    private ListView<String> selectionListView;
+    private ListView<Label> selectionListView;
 
     @FXML
     private TextField textFieldSearchBar;
@@ -70,13 +70,28 @@ public class SelectionViewController {
     private MenuButton toggleMenuButton;
 
     @FXML
-    private TreeView<AnatomyNode> treeViewIsA;
+    private TreeView<ConceptNode> treeViewIsA;
 
     @FXML
-    private TreeView<AnatomyNode> treeViewPartOf;
+    private TreeView<ConceptNode> treeViewPartOf;
 
     @FXML
     private SplitPane treeViewSplitPane;
+
+    @FXML
+    private Label numberSelectedConceptsPartOfLabel;
+
+    @FXML
+    private Label numberSelectedConceptsIsALabel;
+
+    @FXML
+    private Label numberSelectedMeshesLabel;
+
+    @FXML
+    private ToggleButton regexToggleButton;
+
+    @FXML
+    private Button aiButton;
 
     public MenuItem getCollapseMenuItem() {
         return CollapseMenuItem;
@@ -146,7 +161,7 @@ public class SelectionViewController {
         return selectionListToggle;
     }
 
-    public ListView<String> getSelectionListView() {
+    public ListView<Label> getSelectionListView() {
         return selectionListView;
     }
 
@@ -158,16 +173,36 @@ public class SelectionViewController {
         return toggleMenuButton;
     }
 
-    public TreeView<AnatomyNode> getTreeViewIsA() {
+    public TreeView<ConceptNode> getTreeViewIsA() {
         return treeViewIsA;
     }
 
-    public TreeView<AnatomyNode> getTreeViewPartOf() {
+    public TreeView<ConceptNode> getTreeViewPartOf() {
         return treeViewPartOf;
     }
 
     public SplitPane getTreeViewSplitPane() {
         return treeViewSplitPane;
+    }
+
+    public Label getNumberSelectedConceptsPartOfLabel() {
+        return numberSelectedConceptsPartOfLabel;
+    }
+
+    public Label getNumberSelectedConceptsIsALabel() {
+        return numberSelectedConceptsIsALabel;
+    }
+
+    public Label getNumberSelectedMeshesLabel() {
+        return numberSelectedMeshesLabel;
+    }
+
+    public ToggleButton getRegexToggleButton() {
+        return regexToggleButton;
+    }
+
+    public Button getAiButton() {
+        return aiButton;
     }
 
     /**

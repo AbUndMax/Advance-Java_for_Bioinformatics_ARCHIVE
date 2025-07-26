@@ -1,6 +1,6 @@
 package explorer.window.vistools;
 
-import explorer.model.AnatomyNode;
+import explorer.model.treetools.ConceptNode;
 import explorer.model.treetools.TreeUtils;
 import explorer.window.selection.MeshSelectionManager;
 import javafx.application.Platform;
@@ -37,11 +37,15 @@ public class HumanBodyMeshes {
 
     // Shared default material for all MeshViews -> this lifts a heavy load since only one Material has to be managed
     // and thus memory is saved
-    public static final PhongMaterial SHARED_DEFAULT_MATERIAL = new PhongMaterial();
-    static {
-        // setup default Material
+    private final PhongMaterial SHARED_DEFAULT_MATERIAL = new PhongMaterial();
+
+    public HumanBodyMeshes() {
         SHARED_DEFAULT_MATERIAL.setSpecularColor(Color.BLACK);
         SHARED_DEFAULT_MATERIAL.setDiffuseColor(Color.DARKGREY);
+    }
+
+    public PhongMaterial getDefaultPhongMaterial() {
+        return SHARED_DEFAULT_MATERIAL;
     }
 
     /**
@@ -105,7 +109,7 @@ public class HumanBodyMeshes {
      * @param progressCallback a callback that receives the current progress and the total number of files to load.
      */
     public void loadMeshes(String wavefrontFolder, BiConsumer<Integer, Integer> progressCallback) {
-        //TODO move .obj files in resources and apply grouping
+        //TODO move .obj files in resources and apply grouping after project finished
         File folder = new File(wavefrontFolder);
         File[] objFiles = folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".obj"));
         if (objFiles == null || objFiles.length == 0) return;
@@ -148,7 +152,7 @@ public class HumanBodyMeshes {
      * @param isATreeRoot the root of the 'is-a' anatomy tree
      * @param partOfTreeRoot the root of the 'part-of' anatomy tree
      */
-    public void mapFileIDsToMeshes(TreeItem<AnatomyNode> isATreeRoot, TreeItem<AnatomyNode> partOfTreeRoot) {
+    public void mapFileIDsToMeshes(TreeItem<ConceptNode> isATreeRoot, TreeItem<ConceptNode> partOfTreeRoot) {
         TreeUtils.preOrderTreeViewTraversal(partOfTreeRoot, this::mapFileIDsToMeshes);
         TreeUtils.preOrderTreeViewTraversal(isATreeRoot, this::mapFileIDsToMeshes);
     }
@@ -159,15 +163,15 @@ public class HumanBodyMeshes {
      *
      * @param anatomyNodeTreeItem the TreeItem to process
      */
-    private void mapFileIDsToMeshes(TreeItem<AnatomyNode> anatomyNodeTreeItem) {
+    private void mapFileIDsToMeshes(TreeItem<ConceptNode> anatomyNodeTreeItem) {
         if (anatomyNodeTreeItem.isLeaf()) {
-            AnatomyNode anatomyNode = anatomyNodeTreeItem.getValue();
-            for (String fileID : anatomyNode.getFileIDs()) {
+            ConceptNode conceptNode = anatomyNodeTreeItem.getValue();
+            for (String fileID : conceptNode.getFileIDs()) {
                 MeshView mesh = fileIdToMeshMap.get(fileID);
                 if (mesh.getUserData() instanceof HashSet<?> userData) {
                     @SuppressWarnings("unchecked") // not ideal, but since we won't reuse the userData it suffices
-                    HashSet<String> names = (HashSet<String>) userData;
-                    names.add(anatomyNode.getName());
+                    HashSet<String> conceptNames = (HashSet<String>) userData;
+                    conceptNames.add(conceptNode.getName());
                 }
             }
         }

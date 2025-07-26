@@ -1,6 +1,6 @@
 package explorer.window.presenter;
 
-import explorer.model.AnatomyNode;
+import explorer.model.treetools.ConceptNode;
 import explorer.model.AppConfig;
 import explorer.model.ObjIO;
 import explorer.window.GuiRegistry;
@@ -49,16 +49,17 @@ public class VisualizationViewPresenter {
     // registry for all important and central presenter / manager classes
     private final GuiRegistry registry;
 
-    // controller of this presenter class
+    // controller of this presenter class to access Nodes
     private final VisualizationViewController controller;
 
-    // constants copied from assignment06
     // initial view on the tripod is saved as Affine. It is also used as reset position.
     public static final Affine INITIAL_TRANSFORM = new Affine(
             1.0, 0.0, 0.0, 0.0,
             0.0, 0.0, -1.0, 0.0,
             0.0, 1.0, 0.0, 0.0
     );
+
+    // the rotation angle for one applied rotation step
     private static final int ROTATION_STEP = 10;
 
     // one camera instance on the subscene
@@ -104,14 +105,17 @@ public class VisualizationViewPresenter {
      */
     private Group setupVisualisationPane(CommandManager commandManager) {
         Pane visualizationPane = controller.getVisualizationPane();
+        visualizationPane.getStyleClass().add("visualization-pane");
         Group contentGroup = new Group();
         Group root3d = new Group(contentGroup);
 
-        var subScene = new SubScene(root3d, 600, 600, true, SceneAntialiasing.BALANCED);
+        int initWidth = 600;
+        int initHeight = 600;
+        var subScene = new SubScene(root3d, initWidth, initHeight, true, SceneAntialiasing.BALANCED);
         subScene.widthProperty().bind(visualizationPane.widthProperty());
         subScene.heightProperty().bind(visualizationPane.heightProperty());
-        // set subScene background
-        subScene.setFill(Color.LIGHTBLUE);
+        // set subScene background transparent and control the color via the visualizationPane in the css files
+        subScene.setFill(Color.TRANSPARENT);
 
         // add camera
         subScene.setCamera(camera);
@@ -146,7 +150,8 @@ public class VisualizationViewPresenter {
         });
 
         // load the human body parts after the GUI is rendered
-        Platform.runLater(this::loadHumanBody);
+        // TODO benchmark the loading -> how many resources are taken?
+        // Platform.runLater(this::loadHumanBody);
         contentGroup.getTransforms().setAll(INITIAL_TRANSFORM);
 
         return contentGroup;
@@ -161,15 +166,19 @@ public class VisualizationViewPresenter {
      */
     private void visPaneOnScroll(Pane visualizationPane, CommandManager commandManager) {
 
-        double[] scrollStartZoom = {0};
-        double[] scrollStartTranslateX = {0};
-        double[] scrollStartTranslateY = {0};
+        class ScrollStart {
+            double zoom = 0;
+            double translateX = 0;
+            double translateY = 0;
+        }
+
+        ScrollStart scrollStart = new ScrollStart();
 
         // Record initial camera state on scroll start
         visualizationPane.setOnScrollStarted(event -> {
-            scrollStartZoom[0] = camera.getTranslateZ();
-            scrollStartTranslateX[0] = camera.getTranslateX();
-            scrollStartTranslateY[0] = camera.getTranslateY();
+            scrollStart.zoom = camera.getTranslateZ();
+            scrollStart.translateX = camera.getTranslateX();
+            scrollStart.translateY = camera.getTranslateY();
         });
 
         // Apply live panning (Shift) or zoom based on scroll delta
@@ -187,20 +196,20 @@ public class VisualizationViewPresenter {
         // On scroll end, push a capture command for the full scroll interaction
         visualizationPane.setOnScrollFinished(event -> {
             if (event.isShiftDown()) {
-                double totalDeltaX = camera.getTranslateX() - scrollStartTranslateX[0];
-                double totalDeltaY = camera.getTranslateY() - scrollStartTranslateY[0];
+                double totalDeltaX = camera.getTranslateX() - scrollStart.translateX;
+                double totalDeltaY = camera.getTranslateY() - scrollStart.translateY;
                 if (totalDeltaX != 0 || totalDeltaY != 0) {
                     commandManager.executeCommand(new TranslateCaptureCommand(camera,
-                                                                              scrollStartTranslateX[0],
-                                                                              scrollStartTranslateY[0],
+                                                                              scrollStart.translateX,
+                                                                              scrollStart.translateY,
                                                                               camera.getTranslateX(),
                                                                               camera.getTranslateY()));
                 }
             } else {
-                double totalZoomDelta = camera.getTranslateZ() - scrollStartZoom[0];
+                double totalZoomDelta = camera.getTranslateZ() - scrollStart.zoom;
                 if (totalZoomDelta != 0) {
                     commandManager.executeCommand(new ZoomCaptureCommand(camera,
-                                                                         scrollStartZoom[0],
+                                                                         scrollStart.zoom,
                                                                          camera.getTranslateZ()));
                 }
             }
@@ -419,16 +428,16 @@ public class VisualizationViewPresenter {
                 resetView(null); // initial reset should not used as Command
 
                 // bind the TreeViews to the MeshSelection
-                TreeView<AnatomyNode> isATreeView = registry.getSelectionViewController().getTreeViewIsA();
-                TreeView<AnatomyNode> partOfTreeView = registry.getSelectionViewController().getTreeViewPartOf();
-                ListView<String> listView = registry.getSelectionViewController().getSelectionListView();
+                TreeView<ConceptNode> isATreeView = registry.getSelectionViewController().getTreeViewIsA();
+                TreeView<ConceptNode> partOfTreeView = registry.getSelectionViewController().getTreeViewPartOf();
+                ListView<Label> listView = registry.getSelectionViewController().getSelectionListView();
                 // map FileIDs to Meshes
                 humanBodyMeshes.mapFileIDsToMeshes(isATreeView.getRoot(), partOfTreeView.getRoot());
                 // actual binding
                 SelectionBinder binder = registry.getSelectionBinder();
                 binder.bindTreeView(isATreeView);
                 binder.bindTreeView(partOfTreeView);
-                binder.bindListView(listView);
+                binder.bindListView(listView, controller.getSelectionColorPicker());
             }
 
             @Override
@@ -451,10 +460,11 @@ public class VisualizationViewPresenter {
      */
     private void setupClearSelectionButton(CommandManager commandManager) {
         controller.getClearSelectionButton().setOnAction(e -> {
-            commandManager.executeCommand(new ClearSelectionCommand(humanBodyMeshes,
-                                                                    registry.getSelectionViewController().getTreeViewIsA(),
-                                                                    registry.getSelectionViewController().getTreeViewPartOf(),
-                                                                    registry.getSelectionViewController().getTextFieldSearchBar()));
+            commandManager.executeCommand(
+                    new ClearSelectionCommand(humanBodyMeshes,
+                                              registry.getSelectionViewController().getTreeViewIsA(),
+                                              registry.getSelectionViewController().getTreeViewPartOf(),
+                                              registry.getSelectionViewController().getTextFieldSearchBar()));
         });
     }
 
@@ -497,7 +507,8 @@ public class VisualizationViewPresenter {
         controller.getShowFullHumanBodyMenuItem().setOnAction(event -> {
             animationManager.clearAnimations();
             commandManager.executeCommand(
-                    new ShowConceptCommand(new HashSet<>(humanBodyMeshes.getMeshes()), anatomyGroup, humanBodyMeshes, true)
+                    new ShowConceptCommand(new HashSet<>(humanBodyMeshes.getMeshes()), anatomyGroup,
+                                           humanBodyMeshes, true)
             );
         });
 
@@ -516,11 +527,11 @@ public class VisualizationViewPresenter {
      * @return an ArrayList of MeshView objects to be displayed.
      */
     private HashSet<Node> selectedMeshes() {
-        ObservableList<TreeItem<AnatomyNode>> selectedItems =
+        ObservableList<TreeItem<ConceptNode>> selectedItems =
                 registry.getSelectionViewPresenter().getLastFocusedTreeView().getSelectionModel().getSelectedItems();
         HashSet<Node> meshesToDraw = new HashSet<>();
         // Collect meshes corresponding to the selected nodes in the TreeView
-        for (TreeItem<AnatomyNode> selectedItem : selectedItems) {
+        for (TreeItem<ConceptNode> selectedItem : selectedItems) {
             meshesToDraw.addAll(humanBodyMeshes.getMeshesOfFilesIDs(selectedItem.getValue().getFileIDs()));
         }
         return meshesToDraw;
@@ -556,14 +567,14 @@ public class VisualizationViewPresenter {
                     for (MeshView meshView : change.getRemoved()) {
                         Platform.runLater(() -> {
                             meshView.setDrawMode(line.isSelected() ? DrawMode.LINE : DrawMode.FILL);
-                            meshView.setMaterial(HumanBodyMeshes.SHARED_DEFAULT_MATERIAL);
+                            meshView.setMaterial(humanBodyMeshes.getDefaultPhongMaterial());
                         });
                     }
                 }
             }
         });
 
-        // Update draw mode of unselected meshes when draw mode changes
+        // Update draw mode of unselected meshes when draw mode changes i.e from FILL to LINE and vice versa
         drawMode.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
             if (newToggle != null) {
                 RadioButton selected = (RadioButton) newToggle;
@@ -611,10 +622,12 @@ public class VisualizationViewPresenter {
                         commandManager.executeCommand(new HideMeshCommand(meshView, hiddenMeshes));
                     }
                     else if (humanBodyMeshes.getSelectionModel().isSelected(meshView)){
-                        commandManager.executeCommand(new ClearSelectedMeshCommand(humanBodyMeshes.getSelectionModel(), meshView));
+                        commandManager.executeCommand(new ClearSelectedMeshCommand(humanBodyMeshes.getSelectionModel(),
+                                                                                   meshView));
                     }
                     else {
-                        commandManager.executeCommand(new SelectMeshCommand(humanBodyMeshes.getSelectionModel(), meshView));
+                        commandManager.executeCommand(new SelectMeshCommand(humanBodyMeshes.getSelectionModel(),
+                                                                            meshView));
                     }
                 }
             }
@@ -724,6 +737,7 @@ public class VisualizationViewPresenter {
      */
     protected void resetView(CommandManager commandManager) {
         if (commandManager != null) {
+            animationManager.clearAnimations();
             commandManager.executeCommand(new ResetViewCommand(contentGroup, camera));
         }
     }

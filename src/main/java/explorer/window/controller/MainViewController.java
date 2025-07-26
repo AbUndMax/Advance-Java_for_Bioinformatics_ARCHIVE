@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
@@ -94,10 +95,26 @@ public class MainViewController {
     @FXML
     private MenuItem menuButtonInvalidConfig;
 
+    @FXML
+    private MenuItem fullScreenMenuItem;
+
+    @FXML
+    private RadioMenuItem lightModeMenuItem;
+
+    @FXML
+    private RadioMenuItem darkModeMenuItem;
+
+    @FXML
+    private MenuItem menuItemShowFindPane;
+
+    @FXML
+    private MenuItem nodeInformationsMenuItem;
+
     // Controller getters
     public SelectionViewController getSelectionViewController() {
         return selectionController;
     }
+
     public VisualizationViewController getVisualizationViewController() {
         return visualizationController;
     }
@@ -194,6 +211,26 @@ public class MainViewController {
         return menuButtonRedo;
     }
 
+    public MenuItem getFullScreenMenuItem() {
+        return fullScreenMenuItem;
+    }
+
+    public RadioMenuItem getLightModeMenuItem() {
+        return lightModeMenuItem;
+    }
+
+    public RadioMenuItem getDarkModeMenuItem() {
+        return darkModeMenuItem;
+    }
+
+    public MenuItem getMenuItemShowFindPane() {
+        return menuItemShowFindPane;
+    }
+
+    public MenuItem getNodeInformationsMenuItem() {
+        return nodeInformationsMenuItem;
+    }
+
     /**
      * All controls set in the initializer are just for basic GUI behavior!
      * Nothing related to ANY model or window functionality!
@@ -202,11 +239,6 @@ public class MainViewController {
     public void initialize() {
         Platform.runLater(() -> mainSplitPane.setDividerPositions(0.4));
         fixDividerOnResize(mainSplitPane);
-        setupAboutMessage();
-        menuButtonClose.setOnAction(e -> {
-            Platform.exit();
-            System.exit(0);
-        });
     }
 
     /**
@@ -223,28 +255,6 @@ public class MainViewController {
                     splitPane.setDividerPositions(newRelativePos);
                 });
             }
-        });
-    }
-
-    /**
-     * sets up the "ABOUT" message of the Help-Menu
-     */
-    private void setupAboutMessage() {
-        menuButtonAbout.setOnAction(e -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("About");
-            alert.setHeaderText("Anatomy Explorer    ᕙ(  •̀ ᗜ •́  )ᕗ");
-            alert.setContentText("Implemented by Niklas Gerbes! \n" +
-                                         "This app is the final project of the summer term course \n" +
-                                         "\"Advanced Java for Bioinformatics\" \n" +
-                                         "2025 U. Tübingen by Prof. D. Huson \n\n" +
-                                         "The Explorer is based on \"BodyParts3D\":\n" +
-                                         "Mitsuhashi N, Fujieda K, Tamura T, \n" +
-                                         "Kawamoto S, Takagi T, Okubo K.\n" +
-                                         "BodyParts3D: 3D structure database for anatomical concepts.\n" +
-                                         "Nucleic Acids Res. 2008 Oct 3.\n" +
-                                         "PMID: 18835852");
-            alert.showAndWait();
         });
     }
 }
