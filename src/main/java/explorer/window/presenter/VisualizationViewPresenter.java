@@ -7,8 +7,8 @@ import explorer.window.GuiRegistry;
 import explorer.window.command.Command;
 import explorer.window.command.CommandManager;
 import explorer.window.command.commands.*;
-import explorer.window.selection.MeshSelectionManager;
-import explorer.window.selection.SelectionBinder;
+import explorer.selection.MeshSelectionManager;
+import explorer.selection.SelectionBinder;
 import explorer.window.controller.VisualizationViewController;
 import explorer.window.vistools.*;
 import explorer.window.vistools.animations.AnimationManager;
@@ -16,7 +16,6 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.Point3D;
 import javafx.scene.*;
@@ -121,14 +120,14 @@ public class VisualizationViewPresenter {
         subScene.setCamera(camera);
 
         // Add PointLight
-        PointLight pointLight = new PointLight(Color.DARKGREY);
+        PointLight pointLight = new PointLight(Color.rgb(110, 110, 110));
         // point Light is bound to camera position for always optimal scene illumination
         pointLight.translateXProperty().bind(camera.translateXProperty());
         pointLight.translateYProperty().bind(camera.translateYProperty());
         pointLight.translateZProperty().bind(camera.translateZProperty());
 
         // Add AmbientLight
-        AmbientLight ambientLight = new AmbientLight(Color.rgb(180, 180, 180));
+        AmbientLight ambientLight = new AmbientLight(Color.rgb(150, 150, 150));
 
         // Add lights to the root3d group
         root3d.getChildren().addAll(pointLight, ambientLight);
@@ -481,7 +480,7 @@ public class VisualizationViewPresenter {
 
         // Main button action: Show selected meshes and clear running animations
         controller.getShowConceptButton().setOnAction(e -> {
-            Set<Node> meshesToShow = selectedMeshes();
+            Set<Node> meshesToShow = registry.getSelectionViewPresenter().getSelectedConceptMeshes();
             if (!meshesToShow.isEmpty()) {
                 animationManager.clearAnimations();
                 commandManager.executeCommand(
@@ -491,16 +490,18 @@ public class VisualizationViewPresenter {
 
         // Add selected meshes to the currently displayed meshes without clearing the view
         controller.getAddToCurrentShowMenuItem().setOnAction(event -> {
+            Set<Node> meshesToShow = registry.getSelectionViewPresenter().getSelectedConceptMeshes();
             commandManager.executeCommand(
-                    new ShowConceptCommand(selectedMeshes(), anatomyGroup, humanBodyMeshes, false)
+                    new ShowConceptCommand(meshesToShow, anatomyGroup, humanBodyMeshes, false)
             );
         });
 
         // Remove selected meshes from the currently displayed meshes and clear running animations
         controller.getRemoveFromCurrentShowMenuItem().setOnAction(event -> {
+            Set<Node> meshesToShow = registry.getSelectionViewPresenter().getSelectedConceptMeshes();
             animationManager.clearAnimations();
             commandManager.executeCommand(
-                    new RemoveConceptCommand(selectedMeshes(), anatomyGroup));
+                    new RemoveConceptCommand(meshesToShow, anatomyGroup));
         });
 
         // Show all human body meshes and clear running animations
@@ -518,23 +519,6 @@ public class VisualizationViewPresenter {
                     .containsAll(humanBodyMeshes.getMeshes());
             controller.getShowFullHumanBodyMenuItem().setDisable(humanBodyShown);
         });
-    }
-
-    /**
-     * Retrieves the list of meshes associated with the currently selected AnatomyNode items
-     * in the last focused TreeView.
-     *
-     * @return an ArrayList of MeshView objects to be displayed.
-     */
-    private HashSet<Node> selectedMeshes() {
-        ObservableList<TreeItem<ConceptNode>> selectedItems =
-                registry.getSelectionViewPresenter().getLastFocusedTreeView().getSelectionModel().getSelectedItems();
-        HashSet<Node> meshesToDraw = new HashSet<>();
-        // Collect meshes corresponding to the selected nodes in the TreeView
-        for (TreeItem<ConceptNode> selectedItem : selectedItems) {
-            meshesToDraw.addAll(humanBodyMeshes.getMeshesOfFilesIDs(selectedItem.getValue().getFileIDs()));
-        }
-        return meshesToDraw;
     }
 
     /**
@@ -556,7 +540,7 @@ public class VisualizationViewPresenter {
                 if (change.wasAdded()) {
                     for (MeshView meshView : change.getAddedSubList()) {
                         PhongMaterial selectedMaterial = new PhongMaterial(colorPicker.getValue());
-                        selectedMaterial.setSpecularColor(Color.BLACK);
+                        selectedMaterial.setSpecularColor(Color.TRANSPARENT);
 
                         Platform.runLater(() -> {
                             meshView.setDrawMode(DrawMode.FILL);

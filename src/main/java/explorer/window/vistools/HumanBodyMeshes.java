@@ -2,7 +2,7 @@ package explorer.window.vistools;
 
 import explorer.model.treetools.ConceptNode;
 import explorer.model.treetools.TreeUtils;
-import explorer.window.selection.MeshSelectionManager;
+import explorer.selection.MeshSelectionManager;
 import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
@@ -40,8 +40,8 @@ public class HumanBodyMeshes {
     private final PhongMaterial SHARED_DEFAULT_MATERIAL = new PhongMaterial();
 
     public HumanBodyMeshes() {
-        SHARED_DEFAULT_MATERIAL.setSpecularColor(Color.BLACK);
-        SHARED_DEFAULT_MATERIAL.setDiffuseColor(Color.DARKGREY);
+        SHARED_DEFAULT_MATERIAL.setSpecularColor(Color.TRANSPARENT);
+        SHARED_DEFAULT_MATERIAL.setDiffuseColor(Color.LIGHTGRAY);
     }
 
     public PhongMaterial getDefaultPhongMaterial() {
