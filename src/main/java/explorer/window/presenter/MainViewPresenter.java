@@ -1,7 +1,7 @@
 package explorer.window.presenter;
 
-import explorer.model.AppConfig;
-import explorer.model.MyLogger;
+import explorer.apptools.AppConfig;
+import explorer.apptools.AppLogger;
 import explorer.model.treetools.ConceptNode;
 import explorer.window.GuiRegistry;
 import explorer.window.command.Command;
@@ -105,14 +105,23 @@ public class MainViewPresenter {
         mainController.getMenuButtonCollapseIsA().setOnAction(event -> {
             registry.getSelectionViewPresenter().collapseIsATree();
         });
+
         mainController.getMenuButtonExpandPartOf().setOnAction(event -> {
             registry.getSelectionViewPresenter().expandPartOfTree();
         });
         mainController.getMenuButtonCollapsePartOf().setOnAction(event -> {
             registry.getSelectionViewPresenter().collapsePartOfTree();
         });
+
+        mainController.getMenuButtonExpandConcept().setOnAction(event -> {
+            registry.getSelectionViewPresenter().expandAtSelectedNode();
+        });
+        mainController.getMenuButtonCollapseConcept().setOnAction(event -> {
+            registry.getSelectionViewPresenter().collapseAtSelectedNode();
+        });
+
         mainController.getNodeInformationsMenuItem().setOnAction(event -> {
-            nodeInformationHandler(registry);
+            openConceptInformationDialog(registry);
         });
 
 
@@ -242,7 +251,7 @@ public class MainViewPresenter {
      *
      * @param registry the GuiRegistry providing access to controllers and styles
      */
-    private void nodeInformationHandler(GuiRegistry registry) {
+    public void openConceptInformationDialog(GuiRegistry registry) {
         ObservableList<TreeItem<ConceptNode>> selectedItems =
                 registry.getSelectionViewPresenter().getLastFocusedTreeView().getSelectionModel().getSelectedItems();
 
@@ -269,12 +278,13 @@ public class MainViewPresenter {
             }
             infoStage.setScene(scene);
             infoStage.initModality(Modality.APPLICATION_MODAL);
+            infoStage.setAlwaysOnTop(true);
             infoStage.setMinWidth(660);
             infoStage.setMinHeight(450);
             infoStage.show();
 
         } catch (IOException e) {
-            MyLogger.getLogger().log(Level.WARNING, "Couldn't open ConceptInfoDialog", e);
+            AppLogger.getLogger().log(Level.WARNING, "Couldn't open ConceptInfoDialog", e);
         }
     }
 
@@ -351,7 +361,7 @@ public class MainViewPresenter {
             loggerStage.show();
 
         } catch (IOException e) {
-            MyLogger.getLogger().log(Level.WARNING, "Couldn't open LoggerWindow", e);
+            AppLogger.getLogger().log(Level.WARNING, "Couldn't open LoggerWindow", e);
         }
     }
 }
